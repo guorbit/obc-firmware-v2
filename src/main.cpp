@@ -10,7 +10,7 @@ IWDG_HandleTypeDef wdog = {
 // TODO: Remove once confirmed watchdog is working
 void ledStartup()
 {
-  uint8_t i = PD_12;
+  uint8_t i = 0;
   for (; i < 24; i++)
   {
     digitalWriteFast((PinName)(PD_12+i%4), HIGH);
