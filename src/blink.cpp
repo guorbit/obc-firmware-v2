@@ -1,14 +1,14 @@
 #include <Arduino.h>
 
-const long interval = 100;    // base interval
-const int intervalsOn = 1;    // number of intervals to remain on
-const int intervalsTotal = 5; // number of intervals for one on-off cycle
+constexpr uint_fast32_t interval = 250;    // base interval
+constexpr int intervalsOn = 7;    // number of intervals to remain on
+constexpr int intervalsTotal = 15; // number of intervals for one on-off cycle
 
 int currentIntervals = intervalsTotal; // assigned intervalsTotal to start on
 unsigned long previousMillis = 0;      // time of the last interval
 
-void blink(PinName led)
-{
+void blink(PinName led){
+
   unsigned long currentMillis = millis(); // the current uptime (milliseconds)
 
   // if one interval has passed, then reset timer and iterate currentIntervals
