@@ -34,7 +34,7 @@ void ledStartup()
       digitalWriteFast((PinName)(PD_12+i), LOW);
     }
 
-    if (k>= 3)
+    if (k>= 2)
       break;
 
     delay(250);
