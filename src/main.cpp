@@ -70,11 +70,12 @@ void loop()
 {
   // this code loops forever
   blink(PD_13);
-  switch (HAL_IWDG_Refresh(&wdog))
-  {
-  case HAL_OK:
-    break;
-  default:
-    IWDGErrorHandler();
+  if(HAL_IWDG_Refresh(&wdog)!=HAL_OK){
+    IWDGErrorHandler(); // if the watchdog refresh fails, call the error handler
+  }
+  else{
+    digitalWriteFast(PD_12, HIGH); // turn on PD_12 to indicate success
+    delay(100);
+    digitalWriteFast(PD_12, LOW); // turn off PD_12
   }
 }
