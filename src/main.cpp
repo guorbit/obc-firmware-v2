@@ -1,9 +1,11 @@
 #include "main.h"
+
+// TTL = (4*800)/32e3
 IWDG_HandleTypeDef wdog = {
     .Instance = IWDG,
     .Init = {
         .Prescaler = IWDG_PRESCALER_4,
-        .Reload = 80}};
+        .Reload = 800}};
 
 // TODO: Remove once confirmed watchdog is working
 void ledStartup()
