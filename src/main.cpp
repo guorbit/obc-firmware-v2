@@ -14,14 +14,14 @@ void ledStartup()
   for (; i < 24; i++)
   {
     digitalWriteFast((PinName)(PD_12+i%4), HIGH);
-    delay(1250);
+    delay(750);
     digitalWriteFast((PinName)(PD_12+i%4), LOW);
   }
 
   for (i = 0; i < 4; i++)
   {
     digitalWriteFast((PinName)(PD_12+i), HIGH);
-    delay(1000);
+    delay(750);
   }
 
   for (uint8_t k = 0; k < 6; k++)
@@ -35,12 +35,13 @@ void ledStartup()
     if (k>= 5)
       break;
 
-    delay(1200);
+    delay(750);
 
     for (i = 0; i < 4; i++)
     {
       digitalWriteFast((PinName)(PD_12+i), HIGH);
     }
+    delay(750);
   }
 }
 
