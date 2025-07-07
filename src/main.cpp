@@ -11,7 +11,7 @@ IWDG_HandleTypeDef wdog = {
 void ledStartup()
 {
   uint8_t i = 0;
-  for (; i < (32.0*((uwTick%1000)/1000.0))/1; i++)
+  for (; i < 4; i++)
   {
     digitalWriteFast((PinName)(PD_12+i%4), HIGH);
     delay(167);
@@ -26,7 +26,7 @@ void ledStartup()
     delay(750);
   }
 
-  for (uint8_t k = 0; k < 6; k++)
+  for (uint8_t k = 0; k < 3; k++)
   {
 
     for (i = 0; i < 4; i++)
@@ -37,13 +37,13 @@ void ledStartup()
     if (k>= 5)
       break;
 
-    delay(750);
+    delay(250);
 
     for (i = 0; i < 4; i++)
     {
       digitalWriteFast((PinName)(PD_12+i), HIGH);
     }
-    delay(750);
+    delay(250);
   }
 }
 
@@ -84,7 +84,7 @@ void loop()
     IWDGErrorHandler(); // if the watchdog refresh fails, call the error handler
   }
   else{
-    if((currentIntervals%5)==1) // if the blink cycle is complete
+    if(currentIntervals==intervalsTotal) // if the blink cycle is complete
     digitalToggleFast(PD_15); // turn on PD_12 to indicate success
   }
 }

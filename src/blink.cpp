@@ -1,8 +1,7 @@
 #include <Arduino.h>
-
-constexpr uint_fast32_t interval = 250;    // base interval
+#include "blink.h"
+constexpr uint_fast32_t interval = 440;    // base interval
 constexpr int intervalsOn = 7;    // number of intervals to remain on
-constexpr int intervalsTotal = 15; // number of intervals for one on-off cycle
 
 int currentIntervals = intervalsTotal; // assigned intervalsTotal to start on
 unsigned long previousMillis = 0;      // time of the last interval

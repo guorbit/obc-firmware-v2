@@ -10,4 +10,6 @@ extern
 extern unsigned long previousMillis;
 
 extern int currentIntervals; // assigned intervalsTotal to start on
+constexpr int intervalsTotal=10; // number of intervals for one on-off cycle
+ 
 #endif
