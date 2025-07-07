@@ -11,7 +11,7 @@ IWDG_HandleTypeDef wdog = {
 void ledStartup()
 {
   uint8_t i = 0;
-  for (; i < 24; i++)
+  for (; i < (rand()%45); i++)
   {
     digitalWriteFast((PinName)(PD_12+i%4), HIGH);
     delay(167);
