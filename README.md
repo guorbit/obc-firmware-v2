@@ -4,7 +4,10 @@ This repository contains C and C++ code for the STM32F407-based OBC board, made 
 
 ## Outline
 
-The basic program structure is a `setup` function which is run once on startup and the a `loop` function which runs forever from then onwards. The loop will call a list of functions from dedicated code files which perform specific tasks, such as getting the current location from the GPS module onboard ADCS, reading voltages from EPS, or sending data via Comms. Each function should run for no longer than 100 ms, and there will be a watchdog which is petted after each function call exits.  
+The basic program structure is a `setup` function which is run once on startup and a `loop` function which runs forever from then onwards. The loop will call a list of functions from dedicated code files which perform specific tasks, such as getting the current location from the GPS module onboard ADCS, reading voltages from EPS, or sending data via Comms. Each function should run for no longer than 100 ms, and there will be a watchdog which is petted after each function call exits.  
+
+This flowchart, created by David, gives a visual outline of what the program will do: 
+![Program flowchart](docs/graphics/ProgramFlowchart.svg)
 
 ## Contributors
 
