@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include "blink.h"
 constexpr uint_fast32_t interval = 440;    // base interval
 constexpr int intervalsOn = 7;    // number of intervals to remain on
