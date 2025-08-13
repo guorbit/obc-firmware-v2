@@ -3,11 +3,12 @@ extern bool err_flag;
 
 // The way to calculate bark time is:
 // bark time = (4 * reload value) / prescaler
+// RL = 
 // For example, if the prescaler is 4 and the reload value is 800,
 // TTL = (4*800)/32e3
 
 namespace iwdg
-{
+{   static bool iwdg_is_enabled = false;
     constexpr uint_fast32_t bark_time = 1000;             // 1 second
     constexpr uint_fast32_t reload_value = 800;           // reload value for the watchdog
     constexpr uint_fast32_t prescaler = IWDG_PRESCALER_16; // prescaler value for the watchdog
@@ -38,7 +39,7 @@ namespace iwdg
     }
 
     void set_key(){
-        
+        __HAL_IWDG_START(&wdog);
     }
 
     /**
