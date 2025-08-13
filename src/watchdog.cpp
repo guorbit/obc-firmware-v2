@@ -21,7 +21,7 @@ namespace iwdg
         .Instance = IWDG,
         .Init = {
             .Prescaler = prescaler,
-            .Reload = prescaler}};
+            .Reload = reload_value}};
 
     void __weak IWDGErrorHandler()
     {
