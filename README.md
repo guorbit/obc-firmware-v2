@@ -9,6 +9,13 @@ The basic program structure is a `setup` function which is run once on startup a
 This flowchart, created by David, gives a visual outline of what the program will do: 
 ![Program flowchart](docs/graphics/ProgramFlowchart.svg)
 
+## Implemented functionality
+The following functions are currently implemented:  
+-   Non-blocking blinker on the status LED which is called from the loop, used to check that the loop is still running
+-   USB serial connection
+-   Reading from the TMP36 temperature sensor on OBC board
+    +   TODO: measure and set Vref for improved accuracy
+ 
 ## Contributors
 
 The [obc-tasks GitHub Project](https://github.com/orgs/guorbit/projects/9) is where contributors will see `Todo`, `In Progress`, and `Done` tasks. This page has an `Overview` tab showing all issues, and a `My Items` tab in which contributors can see the items assigned to them. If you have no assigned, open tasks then you may assign yourself to any unassigned task in the `Todo` column.  
