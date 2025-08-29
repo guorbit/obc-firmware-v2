@@ -1,28 +1,18 @@
 #include <Arduino.h>
 #include <blink.h>
 #include <tmp.h>
+#include "flash.h"  // SPI flash support
 
-
-
-void setup()
-{
-  // this code runs once at startup
-   
-  // enable status led
-  pinMode(PD13, OUTPUT);
-   
-  // enable serial communication
-  Serial.begin(9600);
+void setup() {
+    // -------------------- Setup --------------------
+    pinMode(PD13, OUTPUT);     // status LED
+    Serial.begin(9600);        // initialize serial for debug output
+    flashInit();               // initialize SPI flash
 }
 
-void loop()
-{
-  // this code loops forever
-
-  // blink status led
-  blink(PD_13);
-
-  Serial.printf("TMP: %i\n", tmp());
-
-  delay(50);
+void loop() {
+    // -------------------- Main Loop --------------------
+    blink(PD_13);                  // blink status LED
+    Serial.printf("TMP: %i\n", tmp());  // print TMP value
+    delay(50);
 }
