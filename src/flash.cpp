@@ -2,7 +2,7 @@
 
 // Chip Select pin
 #define FLASH_CS_PIN PA4
-
+#define FLASH_SIZE_BYTES (16 * 1024 * 1024) // 16 MB total size
 
 
 void flashInit() {
@@ -18,7 +18,6 @@ void flashInit() {
     SPI.setDataMode(SPI_MODE0);           // Mode 0
     SPI.setBitOrder(MSBFIRST);            // Most significant bit first
 }
-
 
 
 void flashRead(uint32_t addr, uint8_t* buffer, size_t len) {
@@ -41,7 +40,6 @@ void flashRead(uint32_t addr, uint8_t* buffer, size_t len) {
     // Pull CS high to deselect flash
     digitalWrite(FLASH_CS_PIN, HIGH);
 }
-
 
 
 // Helper: send Write Enable command
@@ -92,4 +90,28 @@ void flashWrite(uint32_t addr, const uint8_t* data, size_t len) {
         addr += chunk;
         written += chunk;
     }
+}
+
+
+void flashDumpRange(uint32_t addr, size_t len) {
+    const size_t chunkSize = 256;   // read in manageable chunks
+    uint8_t buffer[chunkSize];
+
+    while (len > 0) {
+        size_t toRead = min(chunkSize, len);
+
+        flashRead(addr, buffer, toRead);
+
+        // Print as raw binary (can be piped to file later)
+        for (size_t i = 0; i < toRead; i++) {
+            Serial.write(buffer[i]);
+        }
+
+        addr += toRead;
+        len  -= toRead;
+    }
+}
+
+void flashDumpAll() {
+    flashDumpRange(0, FLASH_SIZE_BYTES);
 }
