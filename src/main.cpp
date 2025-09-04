@@ -6,14 +6,10 @@
 void setup() {
     // -------------------- Setup --------------------
     pinMode(PD13, OUTPUT);     // status LED
-    Serial.begin(921600);        // initialize serial for debug output
-
-    // TODO Need to mess around with the baud rate to optimise the speed vs reliability
+    Serial.begin(115200);        // initialize serial for debug output
 
     flashInit();               // initialize SPI flash
-
-    // Example: Dump first 1 KB
-    flashDumpRange(0, 1024);
+    
 }
 
 void loop() {
