@@ -6,8 +6,10 @@
 void setup() {
     // -------------------- Setup --------------------
     pinMode(PD13, OUTPUT);     // status LED
-    Serial.begin(9600);        // initialize serial for debug output
+    Serial.begin(115200);        // initialize serial for debug output
+
     flashInit();               // initialize SPI flash
+    
 }
 
 void loop() {
