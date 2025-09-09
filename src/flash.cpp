@@ -132,10 +132,40 @@ void flashDumpAll() {
 
 
 uint32_t flashGetNextFreeAddr() {
-    // TODO: implement reading 4-byte pointer from 0x000000
-    return FLASH_METADATA_SIZE; // start after metadata by default
+    uint8_t buf[4];  // 4 bytes for the pointer
+    flashRead(FLASH_POINTER_ADDR, buf, 4);
+
+    // Combine bytes into a uint32_t (big-endian: MSB first)
+    uint32_t addr = ((uint32_t)buf[0] << 24) |
+                    ((uint32_t)buf[1] << 16) |
+                    ((uint32_t)buf[2] << 8)  |
+                    ((uint32_t)buf[3]);
+
+    // Sanity check: if pointer is invalid, reset to FLASH_USER_START
+    if (addr < FLASH_USER_START || addr >= FLASH_SIZE_BYTES) {
+        Serial.println("Warning: flash pointer invalid, resetting to FLASH_USER_START");
+        addr = FLASH_USER_START;
+    }
+
+    return addr;
 }
 
+
 void flashSetNextFreeAddr(uint32_t addr) {
-    // TODO: implement writing 4-byte pointer to 0x000000
+    // Sanity check: prevent writing outside flash bounds
+    if (addr < FLASH_USER_START || addr >= FLASH_SIZE_BYTES) {
+        Serial.println("Error: Attempt to set flash pointer outside valid range");
+        return;
+    }
+
+    // Split uint32_t into 4 bytes (big-endian: MSB first)
+    uint8_t buf[4];
+    buf[0] = (addr >> 24) & 0xFF;
+    buf[1] = (addr >> 16) & 0xFF;
+    buf[2] = (addr >> 8) & 0xFF;
+    buf[3] = addr & 0xFF;
+
+    // Write the 4 bytes to the pointer address
+    flashWrite(FLASH_POINTER_ADDR, buf, 4);
 }
+
