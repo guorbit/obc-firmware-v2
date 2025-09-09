@@ -131,6 +131,11 @@ void flashDumpAll() {
 
 
 
+uint32_t flashGetUserStart() {
+    return FLASH_USER_START;
+}
+
+
 uint32_t flashGetNextFreeAddr() {
     uint8_t buf[4];  // 4 bytes for the pointer
     flashRead(FLASH_POINTER_ADDR, buf, 4);
@@ -168,4 +173,32 @@ void flashSetNextFreeAddr(uint32_t addr) {
     // Write the 4 bytes to the pointer address
     flashWrite(FLASH_POINTER_ADDR, buf, 4);
 }
+
+void saveState(const char* data, size_t len) {
+    if (len == 0) {
+        Serial.println("Warning: saveState called with empty data");
+        return;
+    }
+
+    // Step 1: Get current free address
+    uint32_t addr = flashGetNextFreeAddr();
+
+    // Step 2: Check for overflow
+    if (addr + len >= FLASH_SIZE_BYTES) {
+        Serial.println("Error: Not enough space in flash to save state");
+        return;
+    }
+
+    // Step 3: Write data at free address
+    flashWrite(addr, reinterpret_cast<const uint8_t*>(data), len);
+
+    // Step 4: Update pointer for next free address
+    flashSetNextFreeAddr(addr + len);
+
+    Serial.print("saveState: wrote ");
+    Serial.print(len);
+    Serial.print(" bytes at address 0x");
+    Serial.println(addr, HEX);
+}
+
 
