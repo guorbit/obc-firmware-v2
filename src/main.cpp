@@ -2,14 +2,17 @@
 #include <blink.h>
 #include <tmp.h>
 #include "flash.h"  // SPI flash support
+#include <recovery.h>
 
 void setup() {
     // -------------------- Setup --------------------
+    if (digitalRead(PB2) == HIGH) {recovery();} 
     pinMode(PD13, OUTPUT);     // status LED
     Serial.begin(115200);        // initialize serial for debug output
 
-    flashInit();               // initialize SPI flash
-    
+    flashInit();   
+    // initialize SPI flash
+
 }
 
 void loop() {

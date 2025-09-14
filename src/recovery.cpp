@@ -3,7 +3,7 @@
 void recovery()
 {
   // this code runs in recovery mode
-  while (true);
+  while (true)
   {
     delay(80); // stay here
   }
