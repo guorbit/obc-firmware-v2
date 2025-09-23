@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 char receivedChar;
-boolean newData = false;
+bool newData = false;
 
 
 void recvOneChar() {
