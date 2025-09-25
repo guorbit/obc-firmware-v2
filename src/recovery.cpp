@@ -3,16 +3,17 @@
 char receivedChar;
 bool newData = false;
 
-
 void recvOneChar() {
-  if (Serial.available() > 0) {
+  if (Serial.available() > 0)
+  {
     receivedChar = Serial.read(); // reads a single character
-    newData = true; 
+    newData = true;
   }
 }
 
 void showNewData() {
-  if (newData) {
+  if (newData)
+  {
     Serial.print("Press 't' to set the time, 'f' to read the flash, or 'q' to quit.");
     newData = false;
   }
@@ -32,18 +33,16 @@ void recovery() {
   bool running = true;
 
   while (running) {
-  Serial.println("Entered recovery mode. \n Press any key to continue."); 
+    Serial.println("Entered recovery mode. \n Press any key to continue.");
 
-  while (!newData) {
+    char choice = receivedChar;
+    newData = false;
+    int status = EXIT_SUCCESS;
+
     recvOneChar();
     showNewData();
-  }
 
-  char choice = receivedChar;
-  newData = false;
-  int status = EXIT_SUCCESS;
-
-  switch (choice) {
+    switch (choice) {
     case 't':
     case 'T':
       status = setTimeMode();
@@ -64,5 +63,6 @@ void recovery() {
       Serial.println("Invalid choice.");
       status = EXIT_FAILURE;
       break;
+    }
   }
-}}
+}
