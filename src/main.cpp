@@ -4,18 +4,10 @@
 #include <flash.h>  // SPI flash support
 #include <save.h>   // saveState functionality
 
-
 void setup() {
     // -------------------- Setup --------------------
     pinMode(PD13, OUTPUT);     // status LED
     Serial.begin(115200);      // initialize serial for debug output
-
-    flashInit();               // initialize SPI flash
-
-    // -------------------- Setup --------------------
-    pinMode(PD13, OUTPUT);     // status LED
-    Serial.begin(115200);      // initialize serial for debug output
-
     flashInit();               // initialize SPI flash
 
     // -------------------- SaveState Test --------------------
@@ -51,12 +43,11 @@ void setup() {
     Serial.print("Next free address is now 0x");
     Serial.println(flashGetNextFreeAddr(), HEX);
     Serial.println("SaveState test complete.");
-    // ---------------------------------------------------------
 }
 
 void loop() {
     // -------------------- Main Loop --------------------
-    blink(PD_13);                  // blink status LED
-    Serial.printf("TMP: %i\n", tmp());  // print TMP value
+    blink(PD_13);                   // blink status LED
+    Serial.printf("TMP: %i\n", tmp()); // print TMP value
     delay(50);
 }
