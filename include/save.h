@@ -1,0 +1,33 @@
+#ifndef SAVE_H
+#define SAVE_H
+
+#include <Arduino.h>
+#include <SPI.h>
+
+// -------------------- saveState Functions --------------------
+
+// Saves a character array to flash, appending after previous data
+void saveState(const char* data);
+
+// -------------------- Metadata Helpers --------------------
+
+// Get the first usable user address (after metadata)
+uint32_t flashGetUserStart();
+
+// Reads the "next free" address from flash (0x000000–0x000003)
+uint32_t flashGetNextFreeAddr();
+
+// Writes the "next free" address to flash (0x000000–0x000003)
+void flashSetNextFreeAddr(uint32_t addr);
+
+// -------------------- Memory Map --------------------
+// 0x000000 – 0x0000FF : Reserved for metadata (pointer, future info)
+// 0x000004 – 0xFFFFFF : User data (linear writes / saveState)
+
+// -------------------- saveState Details --------------------
+
+// Save a character array to flash without overwriting existing data.
+// Automatically updates the "next free address" pointer in metadata.
+void saveState(const char* data, size_t len);
+
+#endif // SAVE_H
