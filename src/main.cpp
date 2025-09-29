@@ -1,53 +1,47 @@
 #include <Arduino.h>
 #include <blink.h>
 #include <tmp.h>
-#include <flash.h>  // SPI flash support
-#include <save.h>   // saveState functionality
+#include <flash.h>
+#include <save.h>
 
 void setup() {
-    // -------------------- Setup --------------------
-    pinMode(PD13, OUTPUT);     // status LED
-    Serial.begin(115200);      // initialize serial for debug output
-    flashInit();               // initialize SPI flash
+    pinMode(PD13, OUTPUT);
+    Serial.begin(115200);
+    flashInit();
 
     // -------------------- SaveState Test --------------------
     const char msg1[] = "HELLO WORLD";
     const char msg2[] = "SECOND MESSAGE";
 
-    saveState(msg1, strlen(msg1));
-    saveState(msg2, strlen(msg2));
+    // Save messages and get addresses
+    uint32_t firstAddr  = saveState(msg1, strlen(msg1));
+    if (firstAddr == 0) Serial.println("Failed to save first message!");
 
-    // ---- Read back first message ----
+    uint32_t secondAddr = saveState(msg2, strlen(msg2));
+    if (secondAddr == 0) Serial.println("Failed to save second message!");
+
+    // Read back first message
     uint8_t buffer[32] = {0};
-    uint32_t firstAddr = flashGetUserStart();
     flashRead(firstAddr, buffer, strlen(msg1));
-
+    buffer[strlen(msg1)] = '\0';
     Serial.print("Read back first message: ");
-    for (size_t i = 0; i < strlen(msg1); i++) {
-        Serial.print((char)buffer[i]);
-    }
-    Serial.println();
+    Serial.println((char*)buffer);
 
-    // ---- Read back second message ----
-    uint32_t secondAddr = firstAddr + strlen(msg1);
+    // Read back second message
     memset(buffer, 0, sizeof(buffer));
     flashRead(secondAddr, buffer, strlen(msg2));
-
+    buffer[strlen(msg2)] = '\0';
     Serial.print("Read back second message: ");
-    for (size_t i = 0; i < strlen(msg2); i++) {
-        Serial.print((char)buffer[i]);
-    }
-    Serial.println();
+    Serial.println((char*)buffer);
 
-    // ---- Check final pointer position ----
+    // Check final pointer position
     Serial.print("Next free address is now 0x");
     Serial.println(flashGetNextFreeAddr(), HEX);
     Serial.println("SaveState test complete.");
 }
 
 void loop() {
-    // -------------------- Main Loop --------------------
-    blink(PD_13);                   // blink status LED
-    Serial.printf("TMP: %i\n", tmp()); // print TMP value
+    blink(PD_13);
+    Serial.printf("TMP: %i\n", tmp());
     delay(50);
 }
