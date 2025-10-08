@@ -13,6 +13,7 @@ void setup() {
 
     pinMode(PB2, INPUT);        // recovery mode pin
     if (digitalRead(PB2) == HIGH) {recovery();}  // enter recovery mode if pin is high
+
 }
 
 void loop() {
@@ -21,3 +22,4 @@ void loop() {
     Serial.printf("TMP: %i\n", tmp());  // print TMP value
     delay(50);
 }
+
