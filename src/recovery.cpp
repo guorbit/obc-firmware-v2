@@ -1,24 +1,25 @@
 #include <Arduino.h>
+#include <flash.h> 
 
 char receivedChar;
-bool newData = false;
+bool newData = false; 
 int status = EXIT_SUCCESS;
 
-void recvOneChar() {
+void recvOneChar() {              // receive one character
   if (Serial.available() > 0) {
     receivedChar = Serial.read(); // reads a single character
     newData = true;
   }
 }
 
-void exitMode() {
+void exitMode() {                  // exit recovery mode
   Serial.println("Press q to exit.");
 
-  while(!newData) {
+  while(!newData) {                // wait for new input
     recvOneChar();
   }
 
-  switch(receivedChar){
+  switch(receivedChar){            // process input
     case 'q':
     case 'Q':
       Serial.println("Exiting...");
@@ -27,20 +28,35 @@ void exitMode() {
 
     default:
       Serial.println("Invalid choice.");
-      status = EXIT_FAILURE;
+      status = EXIT_FAILURE; 
       break;
   }
 }
 
-int setTimeMode() {
+int setTimeMode() {                 // stub for setting time
   Serial.println("Setting time not yet implemented...");
   exitMode();
   return status;
 }
 
-int flashDumpMode() {
-  Serial.println("Flash dump not yet implemented...");
-  exitMode();
+int flashDumpMode() {               // dump entire flash
+  Serial.println("Press y to dump entire flash, any other key to exit.");
+  while(!newData) {                 // wait for new input
+    recvOneChar();
+  }
+  switch(receivedChar){
+    case 'y':
+    case 'Y':
+      Serial.println("Dumping entire flash...");
+      flashDumpAll();
+      status = EXIT_SUCCESS;
+      break;
+
+    default:
+      Serial.println("Exiting...");
+      status = EXIT_FAILURE;
+      break;
+  }
   return status;
 }
 
@@ -68,23 +84,23 @@ void handleInput() {
   }
 }
 
-void recovery() {
+void recovery() {                 // recovery mode
   Serial.println("Entered recovery mode. \nPress any key to continue.");
 
-  while(!newData) {
+  while(!newData) {              // wait for new input 
     recvOneChar();
   }
   newData = false;
 
-  while (true) {
+  while (true) {                // main recovery loop  
     Serial.println("Press 't' to set the time, or 'f' to read the flash.");
     newData = false;
-    
-    while(!newData) {
+
+    while(!newData) { 
       recvOneChar();
     }
 
-    handleInput();
+    handleInput(); 
 
   }
 }
