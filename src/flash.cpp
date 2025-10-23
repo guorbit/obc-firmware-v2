@@ -117,3 +117,36 @@ void flashDumpRange(uint32_t addr, size_t len) {
 void flashDumpAll() {
     flashDumpRange(0, FLASH_SIZE_BYTES);
 }
+
+// Helper: send Write Disable command
+void flashWriteDisable() {
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(0x04); // Write Disable
+    digitalWrite(FLASH_CS_PIN, HIGH);
+}
+
+// Erases the 4KB sector containing 'addr'
+// We assume 0x20 is the 4KB Sector Erase command
+void flashEraseSector(uint32_t addr) {
+    // Flash operations only happen on sector boundaries
+    uint32_t sectorAddr = addr & 0xFFFFF000; // Align to 4KB boundary
+
+    // 1. Send Write Enable
+    flashWriteEnable();
+
+    // 2. Send Sector Erase Command
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(0x20); // Sector Erase Command (4KB)
+
+    // 3. Send 24-bit address of the sector
+    SPI.transfer((sectorAddr >> 16) & 0xFF);
+    SPI.transfer((sectorAddr >> 8) & 0xFF);
+    SPI.transfer(sectorAddr & 0xFF);
+    digitalWrite(FLASH_CS_PIN, HIGH);
+
+    // 4. Wait for Busy Flag to clear
+    while (flashIsBusy());
+
+    // 5. Send Write Disable
+    flashWriteDisable();
+}
