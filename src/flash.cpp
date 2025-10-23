@@ -49,7 +49,6 @@ void flashWriteEnable() {
     digitalWrite(FLASH_CS_PIN, HIGH);
 }
 
-
 // Helper: check Busy bit in Status Register
 bool flashIsBusy() {
     digitalWrite(FLASH_CS_PIN, LOW);
@@ -90,6 +89,15 @@ void flashWrite(uint32_t addr, const uint8_t* data, size_t len) {
         addr += chunk;
         written += chunk;
     }
+}
+
+// Bulk erase entire chip
+void flashEraseAll() {
+    flashWriteEnable(); // initialise write to flash
+    digitalWrite(FLASH_CS_PIN, LOW); // select flash
+    SPI.transfer(0xC7); // full chip erase
+    digitalWrite(FLASH_CS_PIN, HIGH); // deselect flash
+    while (flashIsBusy()); // Wait for erase to complete
 }
 
 
