@@ -33,7 +33,7 @@ void exitMode() {                  // exit recovery mode
   }
 }
 
-void HourMinSec() {               // stub for hour min sec input
+void timeHourMinSec() {               // stub for hour min sec input
   Serial.println("Please enter the current year, month, and day.");
   while (Serial.available() == 0) {
     // wait for input
@@ -91,14 +91,14 @@ void HourMinSec() {               // stub for hour min sec input
   Serial.println(buffer);
 }
 
-int manTimeSet() {                // manual time setting
+int timeSetManual() {                // manual time setting
   Serial.println("Manual time setting selected.");
-  // Add manual time setting logic here
+  timeHourMinSec();
   status = EXIT_SUCCESS;
   return status;
 }
 
-int autoTimeSet() {               // automatic time setting
+int timeSetAuto() {               // automatic time setting
   Serial.println("Retrieving time from GPS...");
       // Add automatic time sync logic here
       Serial.println("Time synchronized. Please confirm this time is accurate.");
@@ -118,7 +118,7 @@ int autoTimeSet() {               // automatic time setting
       case 'n':
       case 'N':
         Serial.println("Time rejected. Please enter manual time setting mode.");
-        status = manTimeSet();
+        status = timeSetManual();
         break;
       
       default:
@@ -137,13 +137,13 @@ int setTimeMode() {                 // stub for setting time
   switch(receivedChar){
     case 's':
     case 'S':
-      manTimeSet();                 //manual time set
+      timeSetManual();                 //manual time set
       status = EXIT_SUCCESS;
       break;
 
     case 'a':
     case 'A':
-      autoTimeSet();                //automatic time set
+      timeSetAuto();                //automatic time set
       status = EXIT_SUCCESS;
       break;
 
