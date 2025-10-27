@@ -18,6 +18,7 @@ void exitMode() {                  // exit recovery mode
   while(!newData) {                // wait for new input
     recvOneChar();
   }
+  newData = false;
 
   switch(receivedChar){            // process input
     case 'q':
@@ -107,6 +108,7 @@ int timeSetAuto() {               // automatic time setting
       while(!newData) {           // wait for new input
       recvOneChar();
       }
+      newData = false;
 
       switch (receivedChar) {
       case 'y':
@@ -122,6 +124,8 @@ int timeSetAuto() {               // automatic time setting
         break;
       
       default:
+        Serial.println("Invalid choice.");
+        status = EXIT_FAILURE;
         break;
       }
   return status;
@@ -133,6 +137,7 @@ int setTimeMode() {                 // stub for setting time
   while(!newData) {                 // wait for new input
     recvOneChar();
   }
+  newData = false;
 
   switch(receivedChar){
     case 's':
@@ -205,6 +210,7 @@ void handleInput() {
 
 void recovery() {                 // recovery mode
   Serial.println("Entered recovery mode. \nPress any key to continue.");
+  Serial.setTimeout(60000);   // set timeout to 60 seconds
 
   while(!newData) {              // wait for new input 
     recvOneChar();
