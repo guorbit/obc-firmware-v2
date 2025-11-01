@@ -11,12 +11,16 @@ void flashInit() {
     digitalWrite(FLASH_CS_PIN, HIGH); // CS idle high
 
     // Initialize SPI with STM32 defaults
-    // SPI mode 0: CPOL = 0, CPHA = 0
+    
     // Max clock depends on your board, start with 10 MHz
     SPI.begin();
-    SPI.setClockDivider(SPI_CLOCK_DIV16); // Adjust to ~10 MHz
-    SPI.setDataMode(SPI_MODE0);           // Mode 0
-    SPI.setBitOrder(MSBFIRST);            // Most significant bit first
+    
+    
+    // SPI_CLOCK_DIV16: Adjust to ~10 MHz
+    // MSBFIRST: Most siginifact bit first
+    // SPI_MODE0:  SPI mode 0: CPOL = 0, CPHA = 0
+
+    SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV16,MSBFIRST,SPI_MODE0));
 }
 
 
