@@ -5,10 +5,8 @@
 #ifndef HAL_IWDG_MODULE_ENABLED
 #define HAL_IWDG_MODULE_ENABLED // Ensure that HAL IWD components are enabled
 #endif
-
-#include <Arduino.h>
+#include <stdint.h>
 #include <stm32f4xx_hal_iwdg.h> // use hal iwdg
-#include <sys/errno.h> // use errno for error handling
 
 //TODO : Add function declarations for watchdog
 namespace iwdg

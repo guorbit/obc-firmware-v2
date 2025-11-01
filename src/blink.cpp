@@ -1,13 +1,16 @@
-#include "blink.h"
-constexpr uint_fast32_t interval = 440;    // base interval
-constexpr int intervalsOn = 7;    // number of intervals to remain on
+#include <Arduino.h>
 
-int currentIntervals = intervalsTotal; // assigned intervalsTotal to start on
+const long interval = 100;    // base interval
+const uint8_t intervalsOn = 1;    // number of intervals to remain on
+const uint8_t intervalsTotal = 5; // number of intervals for one on-off cycle
+
+uint8_t currentIntervals = intervalsTotal; // assigned intervalsTotal to start on
 unsigned long previousMillis = 0;      // time of the last interval
+unsigned long currentMillis = 0;
 
-void blink(PinName led){
-
-  unsigned long currentMillis = millis(); // the current uptime (milliseconds)
+void blink(PinName led)
+{
+  currentMillis = millis(); // the current uptime (milliseconds)
 
   // if one interval has passed, then reset timer and iterate currentIntervals
   if (currentMillis - previousMillis >= interval)

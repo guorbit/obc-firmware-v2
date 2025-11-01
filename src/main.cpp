@@ -1,34 +1,25 @@
-#include "main.h"
+#include <Arduino.h>
+#include <blink.h>
+#include <tmp.h>
+#include "flash.h"  // SPI flash support
+#include "recovery.h"
 
-// TODO: Add Wathcdog init call
+void setup() {
+    // -------------------- Setup --------------------
+    pinMode(PD13, OUTPUT);     // status LED
+    Serial.begin(115200);        // initialize serial for debug output
 
-/**
- * @brief The setup function called when the microcontroller retsarts.
- *
- */
-void setup()
-{
+    flashInit();   // initialize SPI flash
 
-  pinMode(PD13, OUTPUT);
-  pinMode(PA0, INPUT_PULLDOWN);
-  iwdg::init_watchdog(); // Initialize the watchdog timer
-  iwdg::set_reload_key(0x1234);
-  // TODO: Set IWDG key to a good value
-  // HAL_IWDG_Refresh(&wdog); // Refresh the watchdog timer
+    pinMode(PB2, INPUT);        // recovery mode pin
+    if (digitalRead(PB2) == HIGH) {recovery();}  // enter recovery mode if pin is high
+
 }
 
-/**
- * @brief The main loop function that runs repeatedly after setup.
- * @details The function should run all neccary functions nad preform logic in a procedural fomrat
- *
- */
-void loop()
-{
-  // this code loops forever
-  while (digitalReadFast(PA_0) == HIGH) // wait for PA0 to be pulled high
-  {
-    digitalWriteFast(PD_12, HIGH);
-  }
-
-  blink(PD_13);
+void loop() {
+    // -------------------- Main Loop --------------------
+    blink(PD_13);                  // blink status LED
+    Serial.printf("TMP: %i\n", tmp());  // print TMP value
+    delay(50);
 }
+
