@@ -12,7 +12,7 @@ void setup()
   pinMode(PD13, OUTPUT);
   pinMode(PA0, INPUT_PULLDOWN);
   iwdg::init_watchdog(); // Initialize the watchdog timer
-  iwdg::set_key(0x1234);
+  iwdg::set_reload_key(0x1234);
   // TODO: Set IWDG key to a good value
   // HAL_IWDG_Refresh(&wdog); // Refresh the watchdog timer
 }

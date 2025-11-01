@@ -19,6 +19,7 @@ namespace iwdg
     extern void init_watchdog();
     extern void init_watchdog_with_user_error_handling();
     extern void pet_watch_dog();
+    extern void set_reload_key(uint16_t key);
 } // namespace iwdg
 
 #endif

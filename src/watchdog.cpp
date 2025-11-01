@@ -1,16 +1,20 @@
 #include "watchdog.hpp"
-extern bool err_flag;
+
+// TODO: Add the error flag to the backup SRAM so that it can be preserved across resets
+// can be done using linker script to ensure that its used instead of a pointer saving 4 bytes
+extern bool err_flag; // Error flag to indicate if the watchdog has barked
 
 // The way to calculate bark time is:
 // bark time = (4 * reload value) / prescaler
-// RL = 
+// RL =
 // For example, if the prescaler is 4 and the reload value is 800,
 // TTL = (4*800)/32e3
 
 namespace iwdg
-{   static bool iwdg_is_enabled = false;
-    constexpr uint_fast32_t bark_time = 1000;             // 1 second
-    constexpr uint_fast32_t reload_value = 800;           // reload value for the watchdog
+{
+    static bool iwdg_is_enabled = false;
+    constexpr uint_fast32_t bark_time = 1000;              // 1 second
+    constexpr uint_fast32_t reload_value = 800;            // reload value for the watchdog
     constexpr uint_fast32_t prescaler = IWDG_PRESCALER_16; // prescaler value for the watchdog
 
     /**
@@ -25,6 +29,7 @@ namespace iwdg
 
     void __weak IWDGErrorHandler()
     {
+        err_flag = EIO; // Input/Output error
     }
 
     /**
@@ -36,10 +41,20 @@ namespace iwdg
     {
         // reset error flag
         HAL_IWDG_Init(&wdog);
+        __HAL_IWDG_DISABLE_WRITE_ACCESS(&wdog);
     }
 
-    void set_key(){
+    void set_reload_key(uint16_t key)
+    {
         __HAL_IWDG_START(&wdog);
+        __HAL_IWDG_ENABLE_WRITE_ACCESS(&wdog);
+        (&wdog)->Instance->RLR = key; // Set the reload value
+        __HAL_IWDG_RELOAD_COUNTER(&wdog);
+        __HAL_IWDG_DISABLE_WRITE_ACCESS(&wdog);
+        if (!iwdg_is_enabled)
+        {
+            iwdg_is_enabled = true; // Mark the watchdog as enabled
+        }
     }
 
     /**
@@ -60,6 +75,7 @@ namespace iwdg
         HAL_PWR_EnableBkUpReg();
 
         __HAL_RCC_BKPSRAM_CLK_ENABLE();
+        writeBackupSRAM(0, (uint32_t*)&err_flag, sizeof(err_flag)); // Write the error flag to backup SRAM
         // reset error flag
         HAL_IWDG_Init(&wdog);
     }
