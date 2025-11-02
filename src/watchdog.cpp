@@ -10,6 +10,7 @@ extern bool err_flag; // true iff a watchdog-related error occurred
 
 namespace iwdg
 {
+    __weak bool __pet_watch_dog__();
     // Timing config: choose a pair that really yields ~0.1 s
     constexpr uint32_t LSI_HZ = 32000U; // typical; measure on your board if you need precision
 
