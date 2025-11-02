@@ -1,7 +1,7 @@
 #include "watchdog.hpp"
 
 // NOTE: err_flag is declared elsewhere; we keep it as a boolean contract here.
-extern bool err_flag; // true iff a watchdog-related error occurred
+bool err_flag = false; // true iff a watchdog-related error occurred
 // TODO: Add an err_flag symbol that points to a spot in flash mem that can be read later
 
 // STM32 IWDG timeout formula (from RM):
