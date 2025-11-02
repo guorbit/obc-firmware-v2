@@ -8,8 +8,6 @@
 #include <stdint.h>
 #include <stm32f4xx.h>
 #include <stm32f4xx_hal_iwdg.h> // use hal iwdg
-// #include <IWatchdog.h>
-#include <stdint.h>
 
 
 //TODO : Add function declarations for watchdog
