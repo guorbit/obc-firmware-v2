@@ -6,7 +6,7 @@
 #define HAL_IWDG_MODULE_ENABLED // Ensure that HAL IWD components are enabled
 #endif
 #include <stdint.h>
-#include <stm32f4xx.h>
+#include <stm32f4xx_hal.h>
 #include <stm32f4xx_hal_iwdg.h> // use hal iwdg
 
 
