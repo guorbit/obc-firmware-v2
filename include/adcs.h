@@ -1,4 +1,6 @@
-#ifndef adcs.h
-#define adcs.h
-std::string readADCS(bool adcsreading, std::string reading);
+#ifndef ADCS_H
+#define ADCS_H
+#include <string>
+// the function for reading ADCS.
+std::string readADCS();
 #endif
