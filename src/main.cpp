@@ -1,12 +1,9 @@
 #include <Arduino.h>
-#include <blink.h>
-#include <tmp.h>
-#include "flash.h"      // SPI flash support
-#include <recovery.h>
-#include "time.h"       // include getTime()
-
-// Forward declaration for RTC init function from rtc.c
-extern "C" void MX_RTC_Init(void);
+#include "blink.h"
+#include "tmp.h"
+#include "flash.h"  // SPI flash support
+#include "recovery.h"
+#include "watchdog.hpp"
 
 void setup() {
     // -------------------- Setup --------------------
@@ -20,11 +17,7 @@ void setup() {
         recovery();              // enter recovery mode if pin is high
     }
 
-    // --- Initialize RTC before using getTime() ---
-    MX_RTC_Init();
-
-    // --- Test call for getTime() ---
-    Serial.printf("Current RTC Time: %s\n", getTime());
+    iwdg::init_watchdog();
 }
 
 void loop() {
@@ -40,6 +33,5 @@ void loop() {
     }
 
     delay(50);
+    iwdg::pet_watch_dog();
 }
-
-
