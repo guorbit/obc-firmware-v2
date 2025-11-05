@@ -8,7 +8,7 @@
 RTC_HandleTypeDef hrtc;  // Define the RTC handle globally
 UART_HandleTypeDef huart2; // UART handle for serial communication
 
-// --------- RTC Setup and Time Retrieval Functions ---------
+// -------------------- RTC Setup -------------------
 void rtcSetTime(void) // Initialise RTC with a specific time and date
 {
     RTC_TimeTypeDef sTime = {0};
@@ -29,17 +29,17 @@ void rtcSetTime(void) // Initialise RTC with a specific time and date
 
 void errorHandler() 
 {
-    //while(1) {}
+    // Initialisation handler
 }
 
-// -------- GPIO Initialisation Functions ---------
+// ------------------ GPIO Initialisation ------------------
 extern "C" void MX_GPIO_Init(void)
 {
     __HAL_RCC_GPIOA_CLK_ENABLE();
     // Add any LED or button pins here if needed
 }
 
-// ------- UART2 Initialisation Function ---------
+// ------------------ UART2 Initialisation ------------------
 extern "C" void MX_USART2_UART_Init(void)
 {
     __HAL_RCC_USART2_CLK_ENABLE();
@@ -68,7 +68,7 @@ extern "C" void MX_USART2_UART_Init(void)
         errorHandler();
 }
 
-// --------- RTC Initialisation Function ---------
+// ---------------- RTC Initialisation Function ------------------
 extern "C" void MX_RTC_Init()
 {
     // Enable Power Clock and Backup Access
@@ -108,7 +108,6 @@ extern "C" void MX_RTC_Init()
 
     if (HAL_RTC_Init(&hrtc) != HAL_OK)
     {
-        // Initialization Error
         errorHandler();
     }
 
@@ -134,7 +133,7 @@ extern "C" void MX_RTC_Init()
     }
 }
 
-// --------- Get Time ---------
+// -------------------- Get Time --------------------
 const char* getTime()
 {
     static char buffer[32];  // Holds formatted time text
@@ -154,73 +153,4 @@ const char* getTime()
 
     // Return the formatted string (stored in static memory)
     return buffer;
-}
-
-// --------- System Clock Configuration Function ---------
-extern "C" void clockConfig(void)
-    {
-    RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-    RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-    // Enable power control clock
-    __HAL_RCC_PWR_CLK_ENABLE();
-    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE2);
-
-    // Configure the main internal oscillator (HSI) and PLL
-    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
-    RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-    RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-    RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSI;
-    RCC_OscInitStruct.PLL.PLLM = 16;
-    RCC_OscInitStruct.PLL.PLLN = 336;
-    RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV4;
-    RCC_OscInitStruct.PLL.PLLQ = 7;
-
-    if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-    {
-        errorHandler();
-    }
-
-    // Initialize CPU, AHB, and APB bus clocks
-    RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK |
-                                  RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-    RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-    RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
-    RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
-
-    if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
-    {
-        errorHandler();
-    }
-}
-
-// --------- Main RTC Time Demo Function ---------
-int main(void){
-
-    extern const char* getTime();
-
-    // Initialize HAL Library
-    HAL_Init();
-
-    // Configure system clock
-    clockConfig();
-
-    // Initialize peripherals
-    MX_GPIO_Init();
-    MX_USART2_UART_Init();
-    MX_RTC_Init();
-
-    // Greeting message
-    const char* startMsg = "STM32 RTC Demo Started.\r\n";
-    HAL_UART_Transmit(&huart2, (uint8_t*)startMsg, strlen(startMsg), HAL_MAX_DELAY);
-
-    // Main loop
-    while (1)
-    {
-        const char* currentTime = getTime();
-        HAL_UART_Transmit(&huart2, (uint8_t*)currentTime, strlen(currentTime), HAL_MAX_DELAY);
-        HAL_Delay(1000);
-    }
 }
