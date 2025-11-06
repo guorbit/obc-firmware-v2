@@ -4,6 +4,7 @@
 #include "flash.h"  // SPI flash support
 #include "recovery.h"
 #include "watchdog.hpp"
+#include "time.h"   // RTC support
 
 void setup() {
     // -------------------- Setup --------------------
@@ -11,6 +12,7 @@ void setup() {
     Serial.begin(115200);        // initialize serial for debug output
 
     flashInit();                 // initialize SPI flash
+    rtcInit();                   // initialize RTC
 
     pinMode(PB2, INPUT);         // recovery mode pin
     if (digitalRead(PB2) == HIGH) {
@@ -28,7 +30,7 @@ void loop() {
     // Optional: print RTC time periodically
     static unsigned long lastPrint = 0;
     if (millis() - lastPrint >= 1000) {
-        Serial.printf("RTC Time: %s\n", getTime());
+        Serial.printf("RTC Time: %s\n", rtcGetTime());
         lastPrint = millis();
     }
 

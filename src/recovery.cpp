@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <flash.h> 
+#include <time.h>
+#include "recovery.h"
 
 char receivedChar;
 bool newData = false; 
@@ -101,8 +103,7 @@ int timeSetManual() {                // manual time setting
 
 int timeSetAuto() {               // automatic time setting
   Serial.println("Retrieving time from GPS...");
-      
-  const char* currentTime = getTime(); 
+  const char* currentTime = rtcGetTime(); 
   Serial.print("Current RTC Time: ");
   Serial.print(currentTime);
 
