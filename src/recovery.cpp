@@ -1,5 +1,7 @@
 #include <Arduino.h>
 #include <flash.h> 
+#include <time.h>
+#include "recovery.h"
 
 char receivedChar;
 bool newData = false; 
@@ -34,7 +36,7 @@ void exitMode() {                  // exit recovery mode
   }
 }
 
-void timeHourMinSec() {               // stub for hour min sec input
+void timeHourMinSec() {               
   Serial.println("Please enter the current year, month, and day.");
   while (Serial.available() == 0) {
     // wait for input
@@ -101,9 +103,12 @@ int timeSetManual() {                // manual time setting
 
 int timeSetAuto() {               // automatic time setting
   Serial.println("Retrieving time from GPS...");
-      // Add automatic time sync logic here
-      Serial.println("Time synchronized. Please confirm this time is accurate.");
-      Serial.println("Press y to confirm, n to reject.");
+  const char* currentTime = rtcGetTime(); 
+  Serial.print("Current RTC Time: ");
+  Serial.print(currentTime);
+
+  Serial.println("Time synchronized. Please confirm this time is accurate.");
+  Serial.println("Press y to confirm, n to reject.");
 
       while(!newData) {           // wait for new input
       recvOneChar();
