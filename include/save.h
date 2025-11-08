@@ -3,30 +3,46 @@
 
 #include <Arduino.h>
 #include <SPI.h>
+#include "flash.h"
 
-// --- Configuration Constants ---
-// Size of user data allocated per metadata bit (e.g., 512 bytes)
-// Must be larger than the max expected size of a single saveState call.
-#define FLASH_BLOCK_SIZE 512 
-// Reserve a 4KB sector for metadata (1 byte = 8 blocks/writes)
-#define FLASH_METADATA_SIZE 0x1000 
-
+// -------------------- Configuration --------------------
+// All constants now come from flash.h for consistency.
+// FLASH_BLOCK_SIZE  = 512 bytes per user write
+// FLASH_METADATA_SIZE = 4KB reserved for metadata
+// FLASH_USER_START = first usable data address
 
 // -------------------- saveState Functions --------------------
-// Saves a character array to flash, appending after previous data.
-// Returns the address it was written to, or 0 on failure.
+
+/**
+ * @brief Saves a character array to flash without overwriting existing data.
+ * Data is written to the first unused block based on the metadata tally.
+ * 
+ * @param data  Pointer to character array
+ * @param len   Number of bytes to write
+ * @return The flash address the data was written to, or 0 on failure
+ */
 uint32_t saveState(const char* data, size_t len);
 
 // -------------------- Metadata Helpers --------------------
 
-// Reads the "next free" address by scanning the metadata tally.
+/**
+ * @brief Reads the metadata tally to find the next free address in flash.
+ * @return The next free address for user data.
+ */
 uint32_t flashGetNextFreeAddr();
 
-// Updates the metadata tally by flipping the current '1' bit to '0'.
-// This internally handles sector erasure when the tally is full.
-void flashAdvanceNextFreeAddr(size_t len);
+/**
+ * @brief Updates the metadata tally after a successful write.
+ * Flips one or more bits from 1 → 0 to mark blocks as used.
+ * 
+ * @param justWrittenAddr The starting address of the last write.
+ * @param len The number of bytes written.
+ */
+void flashAdvanceNextFreeAddr(uint32_t justWrittenAddr, size_t len);
 
-// Get the first usable user address (after metadata)
+/**
+ * @brief Returns the first usable flash address after metadata.
+ */
 uint32_t flashGetUserStart();
 
 #endif // SAVE_H
