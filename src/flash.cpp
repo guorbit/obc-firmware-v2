@@ -10,6 +10,10 @@
 #define CMD_READ_STATUS      0x05
 #define CMD_SECTOR_ERASE_4K  0x20
 
+// -------------------- Relevant Definitions --------------------
+
+#define FLASH_SIZE_BYTES (16 * 1024 * 1024) // 16MB total chip size
+
 // -------------------- Initialization --------------------
 
 void flashInit() {
@@ -23,6 +27,7 @@ void flashInit() {
     SPI.setBitOrder(MSBFIRST);
     SPI.setClockDivider(SPI_CLOCK_DIV16); // ~10 MHz depending on board
 
+    /*
     // ---- Ensure metadata sector is erased (initialized to 0xFF) ----
     uint8_t metaCheck;
     flashRead(0x000000, &metaCheck, 1);
@@ -34,6 +39,7 @@ void flashInit() {
     } else {
         Serial.println("Metadata sector OK (already erased).");
     }
+    */
 }
 
 // -------------------- Basic Operations --------------------
@@ -66,8 +72,9 @@ void flashRead(uint32_t addr, uint8_t* buffer, size_t len) {
     SPI.transfer((addr >> 8) & 0xFF);
     SPI.transfer(addr & 0xFF);
 
-    for (size_t i = 0; i < len; i++)
+    for (size_t i = 0; i < len; i++) {
         buffer[i] = SPI.transfer(0x00);
+    }
 
     digitalWrite(FLASH_CS_PIN, HIGH);
 }
@@ -87,13 +94,16 @@ void flashWrite(uint32_t addr, const uint8_t* data, size_t len) {
         SPI.transfer((addr >> 8) & 0xFF);
         SPI.transfer(addr & 0xFF);
 
-        for (size_t i = 0; i < chunk; i++)
+        for (size_t i = 0; i < chunk; i++) {
             SPI.transfer(data[written + i]);
+        }
 
         digitalWrite(FLASH_CS_PIN, HIGH);
 
         // Wait for write to complete
-        while (flashIsBusy());
+        while (flashIsBusy()) {
+            // Busy wait
+        }
 
         addr += chunk;
         written += chunk;
@@ -116,7 +126,10 @@ void flashEraseSector(uint32_t addr) {
     SPI.transfer(sectorAddr & 0xFF);
     digitalWrite(FLASH_CS_PIN, HIGH);
 
-    while (flashIsBusy());
+    while (flashIsBusy()) {
+        // Busy wait
+    }
+
     flashWriteDisable();
 }
 
@@ -130,8 +143,9 @@ void flashDumpRange(uint32_t addr, size_t len) {
         size_t toRead = min(chunkSize, len);
         flashRead(addr, buffer, toRead);
 
-        for (size_t i = 0; i < toRead; i++)
+        for (size_t i = 0; i < toRead; i++) {
             Serial.write(buffer[i]);
+        }
 
         addr += toRead;
         len  -= toRead;

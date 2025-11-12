@@ -23,7 +23,9 @@ uint32_t flashGetNextFreeAddr() {
         uint8_t current_byte;
         flashRead(byte_idx, &current_byte, 1);
 
-        if (current_byte == 0x00) continue; // all blocks used in this byte
+        if (current_byte == 0x00) {
+            continue; // all blocks used in this byte
+        }
 
         for (int bit_pos = 7; bit_pos >= 0; --bit_pos) {
             if ((current_byte >> bit_pos) & 0x01) {
@@ -48,15 +50,12 @@ uint32_t flashGetNextFreeAddr() {
  * Updates the metadata after a successful write
  */
 void flashAdvanceNextFreeAddr(uint32_t justWrittenAddr, size_t len) {
-    // Calculate the starting block index of the write
     if (justWrittenAddr < FLASH_USER_START) {
         Serial.println("Error: invalid address for metadata update.");
         return;
     }
 
     uint32_t block_index = (justWrittenAddr - FLASH_USER_START) / FLASH_BLOCK_SIZE;
-
-    // Determine how many blocks were written
     uint32_t blocks_to_mark = (len + FLASH_BLOCK_SIZE - 1) / FLASH_BLOCK_SIZE;
 
     for (uint32_t i = 0; i < blocks_to_mark; ++i) {
@@ -79,7 +78,9 @@ void flashAdvanceNextFreeAddr(uint32_t justWrittenAddr, size_t len) {
         flashWrite(byte_idx, &new_byte, 1);
 
         // Wait for completion
-        while (flashIsBusy());
+        while (flashIsBusy()) {
+            // just wait until write completes
+        }
     }
 }
 
@@ -103,11 +104,12 @@ uint32_t saveState(const char* data, size_t len) {
         return 0;
     }
 
-    // Write data to flash
     flashWrite(addr, reinterpret_cast<const uint8_t*>(data), len);
-    while (flashIsBusy());
 
-    // Update metadata
+    while (flashIsBusy()) {
+        // waiting for write to complete
+    }
+
     flashAdvanceNextFreeAddr(addr, len);
 
     Serial.print("saveState: wrote ");
@@ -117,3 +119,17 @@ uint32_t saveState(const char* data, size_t len) {
 
     return addr;
 }
+
+uint32_t saveStateString(const String& data) {
+    if (data.length() == 0) {
+        Serial.println("Warning: saveStateString called with empty data");
+        return 0;
+    }
+
+    // Convert String to a C-style char array
+    const char* cstr = data.c_str();
+
+    // Call the existing saveState() function
+    return saveState(cstr, data.length());
+}
+

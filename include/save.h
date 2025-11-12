@@ -5,13 +5,21 @@
 #include <SPI.h>
 #include "flash.h"
 
-// -------------------- Configuration --------------------
-// All constants now come from flash.h for consistency.
-// FLASH_BLOCK_SIZE  = 512 bytes per user write
-// FLASH_METADATA_SIZE = 4KB reserved for metadata
-// FLASH_USER_START = first usable data address
+// -------------------- Flash Configuration --------------------
 
-// -------------------- saveState Functions --------------------
+// 16 MB total size
+#define FLASH_SIZE_BYTES (16 * 1024 * 1024)
+
+// 4 KB reserved for metadata (tally bits)
+#define FLASH_METADATA_SIZE 0x1000
+
+// Block size of user data per tally bit (adjustable)
+#define FLASH_BLOCK_SIZE 512
+
+// First usable user data address (after metadata region)
+#define FLASH_USER_START FLASH_METADATA_SIZE
+
+// -------------------- SaveState Functions --------------------
 
 /**
  * @brief Saves a character array to flash without overwriting existing data.
@@ -19,9 +27,18 @@
  * 
  * @param data  Pointer to character array
  * @param len   Number of bytes to write
- * @return The flash address the data was written to, or 0 on failure
+ * @return The flash address the data was written to, or 0 on failure.
  */
 uint32_t saveState(const char* data, size_t len);
+
+/**
+ * @brief Saves an Arduino String to flash.
+ * Automatically converts to char array before writing.
+ * 
+ * @param data  The String to save.
+ * @return The flash address the data was written to, or 0 on failure.
+ */
+uint32_t saveStateString(const String& data);
 
 // -------------------- Metadata Helpers --------------------
 

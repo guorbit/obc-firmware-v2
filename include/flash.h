@@ -4,20 +4,6 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-// -------------------- Flash Configuration --------------------
-
-// 16 MB total size
-#define FLASH_SIZE_BYTES (16 * 1024 * 1024)
-
-// 4 KB reserved for metadata (tally bits)
-#define FLASH_METADATA_SIZE 0x1000
-
-// Block size of user data per tally bit (adjustable)
-#define FLASH_BLOCK_SIZE 512
-
-// First usable user data address (after metadata region)
-#define FLASH_USER_START FLASH_METADATA_SIZE
-
 // -------------------- SPI Flash Functions --------------------
 
 // Initialize SPI and ensure metadata region is ready
