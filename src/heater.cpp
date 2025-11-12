@@ -1,8 +1,5 @@
 #include <Arduino.h>
 
-bool state = false; // declaring boolean input value
-int status = EXIT_SUCCESS; //declaring variable for either exit success or failure
-
-int setHeater() {
-    status = EXIT_FAILURE; //returning exit failure (for now)
+int setHeater(bool state) { //giving function input value of 'state', a boolean
+    return EXIT_FAILURE; //returning EXIT_FAILURE (for now)
 }
