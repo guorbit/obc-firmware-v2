@@ -3,6 +3,7 @@
 #include <tmp.h>
 #include "flash.h"
 #include "save.h"
+#include <string>
 
 void setup() {
     pinMode(PD_13, OUTPUT);
@@ -18,7 +19,7 @@ void setup() {
 
     const char msg1[] = "HELLO WORLD";
     const char msg2[] = "SECOND MESSAGE";
-    String msg3 = "THIRD MESSAGE (from String)";
+    std::string msg3 = "THIRD MESSAGE (from std::string)";
 
     // ---- Save first message (C-string) ----
     uint32_t firstAddr = saveState(msg1, strlen(msg1));
@@ -28,7 +29,7 @@ void setup() {
     uint32_t secondAddr = saveState(msg2, strlen(msg2));
     if (secondAddr == 0) Serial.println("Failed to save second message!");
 
-    // ---- Save third message (String type) ----
+    // ---- Save third message (std::string type) ----
     uint32_t thirdAddr = saveStateString(msg3);
     if (thirdAddr == 0) Serial.println("Failed to save third message!");
 

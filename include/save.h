@@ -4,6 +4,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include "flash.h"
+#include <string>
 
 // -------------------- Flash Configuration --------------------
 
@@ -32,13 +33,13 @@
 uint32_t saveState(const char* data, size_t len);
 
 /**
- * @brief Saves an Arduino String to flash.
- * Automatically converts to char array before writing.
+ * @brief Saves a std::string to flash.
+ * Converts the string into a char buffer before writing.
  * 
- * @param data  The String to save.
+ * @param s  The std::string to save.
  * @return The flash address the data was written to, or 0 on failure.
  */
-uint32_t saveStateString(const String& data);
+uint32_t saveStateString(const std::string& s);
 
 // -------------------- Metadata Helpers --------------------
 

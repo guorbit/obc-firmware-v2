@@ -1,6 +1,7 @@
 #include "save.h"
 #include "flash.h"
 #include <Arduino.h>
+#include <string>
 
 // -------------------- Metadata Buffer --------------------
 // Optional: can be read byte-by-byte if RAM is tight
@@ -120,16 +121,17 @@ uint32_t saveState(const char* data, size_t len) {
     return addr;
 }
 
-uint32_t saveStateString(const String& data) {
-    if (data.length() == 0) {
+uint32_t saveStateString(const std::string& s) {
+    if (s.empty()) {
         Serial.println("Warning: saveStateString called with empty data");
         return 0;
     }
 
-    // Convert String to a C-style char array
-    const char* cstr = data.c_str();
+    // Convert std::string → char array
+    const char* cstr = s.c_str();
 
-    // Call the existing saveState() function
-    return saveState(cstr, data.length());
+    // Delegate to saveState()
+    return saveState(cstr, s.size());
 }
+
 
