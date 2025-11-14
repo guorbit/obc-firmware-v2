@@ -1,4 +1,4 @@
-int EXIT_FAILURE=1;
+#include <stdlib.h>
 int triggerburnwire(int millisOn){
     return EXIT_FAILURE;
 }
