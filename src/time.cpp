@@ -11,7 +11,6 @@ void rtcSetTime() // Initialise RTC with a specific time and date
 {
     RTC_TimeTypeDef sTime = {0};
     RTC_DateTypeDef sDate = {0};
-
     // Set time manually to 00:00:00
     sTime.Hours = 00;
     sTime.Minutes = 00;
