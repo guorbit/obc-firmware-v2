@@ -19,6 +19,10 @@ void flashWrite(uint32_t addr, const uint8_t* data, size_t len);
 bool flashIsBusy();
 
 // Dump a given range over Serial (for debugging)
+// Erase entire flash chip
+void flashEraseAll();
+
+// Dumps a given range (partial dump)
 void flashDumpRange(uint32_t addr, size_t len);
 
 // Dump the entire 16MB chip (be cautious, slow!)

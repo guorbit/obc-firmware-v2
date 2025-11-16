@@ -21,25 +21,17 @@ void flashInit() {
     pinMode(FLASH_CS_PIN, OUTPUT);
     digitalWrite(FLASH_CS_PIN, HIGH);
 
-    // Setup SPI
+    // Initialize SPI with STM32 defaults
+    
+    // Max clock depends on your board, start with 10 MHz
     SPI.begin();
-    SPI.setDataMode(SPI_MODE0);
-    SPI.setBitOrder(MSBFIRST);
-    SPI.setClockDivider(SPI_CLOCK_DIV16); // ~10 MHz depending on board
+    
+    
+    // SPI_CLOCK_DIV16: Adjust to ~10 MHz
+    // MSBFIRST: Most siginifact bit first
+    // SPI_MODE0:  SPI mode 0: CPOL = 0, CPHA = 0
 
-    /*
-    // ---- Ensure metadata sector is erased (initialized to 0xFF) ----
-    uint8_t metaCheck;
-    flashRead(0x000000, &metaCheck, 1);
-
-    if (metaCheck != 0xFF) {
-        Serial.println("Metadata sector not empty. Erasing...");
-        flashEraseSector(0x000000);
-        Serial.println("Metadata sector initialized to all 1s.");
-    } else {
-        Serial.println("Metadata sector OK (already erased).");
-    }
-    */
+    SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV16,MSBFIRST,SPI_MODE0));
 }
 
 // -------------------- Basic Operations --------------------
@@ -131,6 +123,15 @@ void flashEraseSector(uint32_t addr) {
     }
 
     flashWriteDisable();
+}
+
+// Bulk erase entire chip
+void flashEraseAll() {
+    flashWriteEnable(); // initialise write to flash
+    digitalWrite(FLASH_CS_PIN, LOW); // select flash
+    SPI.transfer(0xC7); // full chip erase
+    digitalWrite(FLASH_CS_PIN, HIGH); // deselect flash
+    while (flashIsBusy()); // Wait for erase to complete
 }
 
 // -------------------- Dump Utilities --------------------
