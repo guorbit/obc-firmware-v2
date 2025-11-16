@@ -3,7 +3,6 @@
 #include <tmp.h>
 #include "flash.h"
 #include "save.h"
-#include <string>
 
 void setup() {
     pinMode(PD_13, OUTPUT);
