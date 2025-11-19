@@ -8,6 +8,16 @@
 #include "adcs.h"
 #include "save.h"
 
+
+// Temp comms handling in main
+#include "LoRa_E32.h"
+#include <HardwareSerial.h>
+
+// Temp comms innit
+HardwareSerial uart0(PA9, PA10);
+LoRa_E32 comms(&uart0, UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
+
+
 // Initialise character variables
 char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered";
 
@@ -48,6 +58,10 @@ void loop() {
         Serial.println(dataFromADCS);
 
         saveState(dataFromADCS, strlen(dataFromADCS));
+
+        iwdg::pet_watch_dog();
+
+        comms.sendMessage(dataFromADCS);
 
         iwdg::pet_watch_dog();
     }
