@@ -8,6 +8,9 @@
 //  ADCS board, in bytes.  
 #define READOUT_LENGTH_ADCS 32
 
+// Set the I²C clock frequency
+#define ADCS_I2C_SPEED 100000
+
 // Set the I²C options
 #define ADCS_I2C_SDA PB7
 #define ADCS_I2C_SCL PB6

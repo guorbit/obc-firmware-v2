@@ -5,7 +5,7 @@
 TwoWire i2c0 = TwoWire(0);
 
 int initADCS() {
-    i2c0.begin(ADCS_I2C_SDA, ADCS_I2C_SCL, 100000);
+    i2c0.begin(ADCS_I2C_SDA, ADCS_I2C_SCL, ADCS_I2C_SPEED);
     return EXIT_SUCCESS;
 }
 
@@ -13,7 +13,9 @@ int readADCS(char* adcsData) {
     i2c0.requestFrom(ADCS_I2C_ADDRESS, READOUT_LENGTH_ADCS);
 
     for (int i = 0; i < READOUT_LENGTH_ADCS; i++) {
-        adcsData[i] = i2c0.read();
+        if (i2c0.available()) {
+            adcsData[i] = i2c0.read();
+        }
     }
 
     /*
