@@ -12,6 +12,7 @@
 // Temp comms handling in main
 #include "LoRa_E32.h"
 #include <HardwareSerial.h>
+#define COMMS_BROADCAST_CHANNEL 0x04
 
 // Temp comms innit
 HardwareSerial uart0(PA9, PA10);
@@ -34,6 +35,8 @@ void setup() {
     if (digitalRead(PB2) == HIGH) {
         recovery();              // enter recovery mode if pin is high
     }
+
+    comms.begin();
 
     iwdg::init_watchdog();
 }
@@ -61,7 +64,7 @@ void loop() {
 
         iwdg::pet_watch_dog();
 
-        comms.sendMessage(dataFromADCS);
+        comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, dataFromADCS);
 
         iwdg::pet_watch_dog();
     }
