@@ -3,6 +3,6 @@
 
 #include <string>
 
-int sendStateToComms(const stf:: string &state);
+int sendComms(std::string state);
 
 #endif
