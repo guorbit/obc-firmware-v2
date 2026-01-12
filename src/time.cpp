@@ -12,47 +12,15 @@ void rtcSetTime(){ // Initialise RTC with a specific time and date
     
     RTC_TimeTypeDef sTime = {0};
     RTC_DateTypeDef sDate = {0};
-
-    Serial.println("Setting RTC Time and Date.");
-    Serial.println("Please enter the format: YYYY-MM-DD HH:MM:SS ");
-    while (Serial.available() == 0) {
-        // wait for input
-    }
-
-    String dateInput = Serial.readStringUntil('\n');    //read input until enter
-    dateInput.trim();                                  //remove any leading/trailing whitespace
-  
-    // basic format validation
-    if (dateInput.length() != 19 ||
-        dateInput.charAt(4) != '-' ||
-        dateInput.charAt(7) != '-' ||
-        dateInput.charAt(10) != ' ' ||
-        dateInput.charAt(13) != ':' ||
-        dateInput.charAt(16) != ':') {
-
-        Serial.println("Invalid format. Use: YYYY-MM-DD HH:MM:SS");
-        return;
-    }
   
     // extract values
-    int year    = dateInput.substring(0, 4).toInt();
-    int yearShort = year - 2000; // RTC uses 2-digit year
-    int month   = dateInput.substring(5, 7).toInt();
-    int day     = dateInput.substring(8, 10).toInt();
-    int hour    = dateInput.substring(11, 13).toInt(); 
-    int minute  = dateInput.substring(14, 16).toInt();
-    int second  = dateInput.substring(17, 19).toInt();
-
-    // validate ranges
-    if (month < 1 || month > 12 || day < 1 || day > 31) {   
-        Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
-        return;
-    }
-
-    if (hour < 0 || hour > 23 || minute < 0 || minute > 59 || second < 0 || second > 59) {   
-        Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
-        return;
-    }
+    u_int8_t year    = 2026;
+    u_int8_t yearShort = year - 2000; // RTC uses 2-digit year
+    u_int8_t month   = 01;
+    u_int8_t day     = 01;
+    u_int8_t hour    = 00;
+    u_int8_t minute  = 00;
+    u_int8_t second  = 00;
 
     // print formatted time on one line
     Serial.println("RTC time set.");

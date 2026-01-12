@@ -28,6 +28,8 @@ void loop() {
     Serial.printf("TMP: %i\n", tmp());  // print TMP value
 
     // Optional: print RTC time periodically
+    rtcSetTime(); 
+
     static unsigned long lastPrint = 0;
     if (millis() - lastPrint >= 1000) {
         Serial.printf("RTC Time: %s\n", rtcGetTime());
