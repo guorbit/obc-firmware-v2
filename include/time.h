@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 
-void rtcSetTime(String isotime);
+void rtcSetTime(char* isotime);
 // Function to read the current date and time from the STM32's RTC.
 // Returns a formatted string like: "2025-10-18T 14:23:05Z"
 const char* rtcGetTime(void);

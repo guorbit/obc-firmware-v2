@@ -29,7 +29,7 @@ void loop() {
     Serial.printf("TMP: %i\n", tmp());  // print TMP value
 
     // Optional: print RTC time periodically
-    String isotime = "2026-01-01T00:00:00Z"; //readADCSTime();
+    char isotime[21]  = "2026-01-01T00:00:00Z"; //readADCSTime();
     rtcSetTime(isotime); // Set default time if not already set
 
     static unsigned long lastPrint = 0;

@@ -9,36 +9,32 @@
 RTC_HandleTypeDef hrtc;  // Define the RTC handle globally
 
 // -------------------- RTC Setup -------------------
-void rtcSetTime(String isotime){ // Initialise RTC with a specific time and date   
+void rtcSetTime(char* isotime){ // Initialise RTC with a specific time and date   
 
     RTC_TimeTypeDef sTime = {0};
     RTC_DateTypeDef sDate = {0};
 
-    if (isotime.length() < 19) {
+    if (strlen(isotime) < 19) {
         // If no valid time string is provided, use a default time
-        isotime = "2026-01-01T00:00:00Z"; 
+        char isotime[21] = "2026-01-01T00:00:00Z"; 
     }
 
-    int year   = isotime.substring(0, 4).toInt();
-    int yearShort = year - 2000; // RTC uses 2-digit year
-    int month  = isotime.substring(5, 7).toInt();
-    int day    = isotime.substring(8, 10).toInt();
-    int hour   = isotime.substring(11, 13).toInt();
-    int minute = isotime.substring(14, 16).toInt();
-    int second = isotime.substring(17, 19).toInt();
+    int year, month, day, hour, minute, second;
+    sscanf(isotime, "%4d-%2d-%2dT%2d:%2d:%2dZ", &year, &month, &day, &hour, &minute, &second);
+    int yearShort = year - 2000; // RTC year is offset from 2000
 
     char buffer[25];
     sprintf(buffer, "Setting RTC to: %04d-%02d-%02dT%02d:%02d:%02dZ\r\n", year, month, day, hour, minute, second);
     Serial.print(buffer);
 
-    sTime.Hours = hour;
-    sTime.Minutes = minute;
-    sTime.Seconds = second;
+    sTime.Hours = (u_int8_t)hour;
+    sTime.Minutes = (u_int8_t)minute;
+    sTime.Seconds = (u_int8_t)second;
     HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
-    sDate.Year = yearShort; // RTC year is offset from 2000
-    sDate.Month = month;
-    sDate.Date = day;
+    sDate.Year = (u_int8_t)yearShort; // RTC year is offset from 2000
+    sDate.Month = (u_int8_t)month;
+    sDate.Date = (u_int8_t)day;
     HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 }
 
@@ -94,7 +90,7 @@ extern "C" void rtcInit()
     if (HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != 0x32F2)
     {
         // First time: set time and mark backup register
-        rtcSetTime(String("2026-01-01T00:00:00Z")); // Set default time
+        rtcSetTime("2026-01-01T00:00:00Z"); // Set default time
         HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x32F2);
         __HAL_RCC_CLEAR_RESET_FLAGS(); // Clear reset flags
     }
