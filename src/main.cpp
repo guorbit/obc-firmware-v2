@@ -5,6 +5,7 @@
 #include "recovery.h"
 #include "watchdog.hpp"
 #include "time.h"   // RTC support
+#include "string.h"
 
 void setup() {
     // -------------------- Setup --------------------
@@ -28,7 +29,8 @@ void loop() {
     Serial.printf("TMP: %i\n", tmp());  // print TMP value
 
     // Optional: print RTC time periodically
-    rtcSetTime(); 
+    String isotime = "2026-01-01T00:00:00Z"; //readADCSTime();
+    rtcSetTime(isotime); // Set default time if not already set
 
     static unsigned long lastPrint = 0;
     if (millis() - lastPrint >= 1000) {
