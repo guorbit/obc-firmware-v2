@@ -1,14 +1,25 @@
 #include "flash.h"
 
-// Chip Select pin
-#define FLASH_CS_PIN PA4
-#define FLASH_SIZE_BYTES (16 * 1024 * 1024) // 16 MB total size
+// -------------------- Pin and Command Setup --------------------
 
+#define FLASH_CS_PIN PA4   // Chip Select pin
+#define CMD_READ_DATA        0x03
+#define CMD_PAGE_PROGRAM     0x02
+#define CMD_WRITE_ENABLE     0x06
+#define CMD_WRITE_DISABLE    0x04
+#define CMD_READ_STATUS      0x05
+#define CMD_SECTOR_ERASE_4K  0x20
+
+// -------------------- Relevant Definitions --------------------
+
+#define FLASH_SIZE_BYTES (16 * 1024 * 1024) // 16MB total chip size
+
+// -------------------- Initialization --------------------
 
 void flashInit() {
     // Configure CS pin
     pinMode(FLASH_CS_PIN, OUTPUT);
-    digitalWrite(FLASH_CS_PIN, HIGH); // CS idle high
+    digitalWrite(FLASH_CS_PIN, HIGH);
 
     // Initialize SPI with STM32 defaults
     
@@ -23,76 +34,95 @@ void flashInit() {
     SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV16,MSBFIRST,SPI_MODE0));
 }
 
+// -------------------- Basic Operations --------------------
+
+bool flashIsBusy() {
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(CMD_READ_STATUS);
+    uint8_t status = SPI.transfer(0x00);
+    digitalWrite(FLASH_CS_PIN, HIGH);
+    return (status & 0x01); // Busy bit
+}
+
+void flashWriteEnable() {
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(CMD_WRITE_ENABLE);
+    digitalWrite(FLASH_CS_PIN, HIGH);
+}
+
+void flashWriteDisable() {
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(CMD_WRITE_DISABLE);
+    digitalWrite(FLASH_CS_PIN, HIGH);
+}
 
 void flashRead(uint32_t addr, uint8_t* buffer, size_t len) {
-    // Pull CS low to select flash
     digitalWrite(FLASH_CS_PIN, LOW);
 
-    // Send Read command
-    SPI.transfer(0x03);
-
-    // Send 24-bit address (MSB first)
+    SPI.transfer(CMD_READ_DATA);
     SPI.transfer((addr >> 16) & 0xFF);
     SPI.transfer((addr >> 8) & 0xFF);
     SPI.transfer(addr & 0xFF);
 
-    // Read 'len' bytes into buffer
     for (size_t i = 0; i < len; i++) {
-        buffer[i] = SPI.transfer(0x00); // send dummy byte to clock in data
+        buffer[i] = SPI.transfer(0x00);
     }
 
-    // Pull CS high to deselect flash
     digitalWrite(FLASH_CS_PIN, HIGH);
 }
-
-
-// Helper: send Write Enable command
-void flashWriteEnable() {
-    digitalWrite(FLASH_CS_PIN, LOW);
-    SPI.transfer(0x06); // Write Enable
-    digitalWrite(FLASH_CS_PIN, HIGH);
-}
-
-// Helper: check Busy bit in Status Register
-bool flashIsBusy() {
-    digitalWrite(FLASH_CS_PIN, LOW);
-    SPI.transfer(0x05); // Read Status Register
-    uint8_t status = SPI.transfer(0x00);
-    digitalWrite(FLASH_CS_PIN, HIGH);
-    return status & 0x01; // Busy bit = bit 0
-}
-
 
 void flashWrite(uint32_t addr, const uint8_t* data, size_t len) {
     size_t written = 0;
 
     while (written < len) {
-        size_t pageOffset = addr % 256;              // position in page
-        size_t chunk = min(256 - pageOffset, len - written); // bytes to write in this page
+        size_t pageOffset = addr % 256;
+        size_t chunk = min(256 - pageOffset, len - written);
 
-        flashWriteEnable(); // Enable writing
+        flashWriteEnable();
 
         digitalWrite(FLASH_CS_PIN, LOW);
-        SPI.transfer(0x02); // Page Program command
-
-        // Send 24-bit address
+        SPI.transfer(CMD_PAGE_PROGRAM);
         SPI.transfer((addr >> 16) & 0xFF);
         SPI.transfer((addr >> 8) & 0xFF);
         SPI.transfer(addr & 0xFF);
 
-        // Send data chunk
         for (size_t i = 0; i < chunk; i++) {
             SPI.transfer(data[written + i]);
         }
+
         digitalWrite(FLASH_CS_PIN, HIGH);
 
-        // Wait until write completes
-        while (flashIsBusy());
+        // Wait for write to complete
+        while (flashIsBusy()) {
+            // Busy wait
+        }
 
-        // Move to next chunk/page
         addr += chunk;
         written += chunk;
     }
+
+    flashWriteDisable();
+}
+
+// -------------------- Erase --------------------
+
+void flashEraseSector(uint32_t addr) {
+    uint32_t sectorAddr = addr & 0xFFFFF000; // Align to 4KB
+
+    flashWriteEnable();
+
+    digitalWrite(FLASH_CS_PIN, LOW);
+    SPI.transfer(CMD_SECTOR_ERASE_4K);
+    SPI.transfer((sectorAddr >> 16) & 0xFF);
+    SPI.transfer((sectorAddr >> 8) & 0xFF);
+    SPI.transfer(sectorAddr & 0xFF);
+    digitalWrite(FLASH_CS_PIN, HIGH);
+
+    while (flashIsBusy()) {
+        // Busy wait
+    }
+
+    flashWriteDisable();
 }
 
 // Bulk erase entire chip
@@ -104,17 +134,16 @@ void flashEraseAll() {
     while (flashIsBusy()); // Wait for erase to complete
 }
 
+// -------------------- Dump Utilities --------------------
 
 void flashDumpRange(uint32_t addr, size_t len) {
-    const size_t chunkSize = 256;   // read in manageable chunks
+    const size_t chunkSize = 256;
     uint8_t buffer[chunkSize];
 
     while (len > 0) {
         size_t toRead = min(chunkSize, len);
-
         flashRead(addr, buffer, toRead);
 
-        // Print as raw binary (can be piped to file later)
         for (size_t i = 0; i < toRead; i++) {
             Serial.write(buffer[i]);
         }
