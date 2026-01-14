@@ -23,10 +23,6 @@ void rtcSetTime(char* isotime){ // Initialise RTC with a specific time and date
     sscanf(isotime, "%4d-%2d-%2dT%2d:%2d:%2dZ", &year, &month, &day, &hour, &minute, &second);
     int yearShort = year - 2000; // RTC year is offset from 2000
 
-    char buffer[25];
-    sprintf(buffer, "Setting RTC to: %04d-%02d-%02dT%02d:%02d:%02dZ\r\n", year, month, day, hour, minute, second);
-    Serial.print(buffer);
-
     sTime.Hours = (u_int8_t)hour;
     sTime.Minutes = (u_int8_t)minute;
     sTime.Seconds = (u_int8_t)second;
@@ -90,7 +86,8 @@ extern "C" void rtcInit()
     if (HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != 0x32F2)
     {
         // First time: set time and mark backup register
-        rtcSetTime("2026-01-01T00:00:00Z"); // Set default time
+        char setTime[21] = "2026-01-01T00:00:00Z";
+        rtcSetTime(setTime); // Set default time
         HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x32F2);
         __HAL_RCC_CLEAR_RESET_FLAGS(); // Clear reset flags
     }
