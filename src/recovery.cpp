@@ -21,7 +21,7 @@ void recvOneChar() {              // receive one character
   }
 }
 
-void showinput(const String character, const String word){
+void showinput(const String character, const String word){ // if the word input is character or sentance input, then they will be shown. 
   if (word=="char"){
     String character = "";
     character=receivedChar;
