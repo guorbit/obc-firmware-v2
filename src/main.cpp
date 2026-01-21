@@ -36,12 +36,13 @@ void setup() {
         recovery();              // enter recovery mode if pin is high
     }
 
+    // Comms CFG pin
     pinMode(PC6, OUTPUT);
     digitalWriteFast(PC_6, LOW);
 
     comms.begin();
 
-    //iwdg::init_watchdog();
+    iwdg::init_watchdog();
 }
 
 void loop() {
@@ -69,12 +70,14 @@ void loop() {
 
         iwdg::pet_watch_dog();
 
-        comms.sendMessage(dataFromADCS);
+        //comms.sendMessage(dataFromADCS);
         //comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, dataFromADCS);
 
         iwdg::pet_watch_dog();
     }
 
+
+    iwdg::pet_watch_dog();
     delay(50);
     iwdg::pet_watch_dog();
 }
