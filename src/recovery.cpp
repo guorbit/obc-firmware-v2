@@ -2,21 +2,72 @@
 #include <flash.h> 
 #include <time.h>
 #include "recovery.h"
-
 char receivedChar;
 bool newData = false; 
 int status = EXIT_SUCCESS;
+// Initialized string time and year values for the validation function
+String year="0";
+String month = "0";
+String day = "0";
+String hours = "0";
+String minutes = "0";
+String seconds = "0";
 
 void recvOneChar() {              // receive one character
   if (Serial.available() > 0) {
     receivedChar = Serial.read(); // reads a single character
     newData = true;
+     // store the character in the char character 
   }
 }
 
-void exitMode() {                  // exit recovery mode
-  Serial.println("Press q to exit.");
+void showinput(const String character, const String word){ // if the word input is character or sentance input, then they will be shown. 
+  if (word=="char"){
+    String character = "";
+    character=receivedChar;
+    Serial.println(receivedChar);
+    newData= false;
+  }
+  else if (word=="sentence"){
+    Serial.println(character);
+    newData= false;
+   }
+}
+void instructiontemp(char receivedChar){ // Press 'char' to 'excute the action'
+  String action;
+  Serial.print("Press ");
+  Serial.print(receivedChar);
+  Serial.print(" to ");
+  switch(receivedChar){
+    case 'q':
+    action="exit";
+    break;
+    case 's':
+    action="set time";
+    break;
+    case 'a':
+    action="automatic time sync.";
+    break;
+    case 'y':
+    action="confirm";
+    break;
+    case 'n':
+    action="reject.";
+    case 't':
+    action="set the time";
+    break;
+    case 'f':
+    action="read the flash.";
+    break;
+    case 'd':
+    action="dump entire flash, or any other key to exit.";
+    break;
 
+  }
+  Serial.print(action.c_str());
+}
+void exitMode() {                  // exit recovery mode
+  instructiontemp('q');
   while(!newData) {                // wait for new input
     recvOneChar();
   }
@@ -25,6 +76,7 @@ void exitMode() {                  // exit recovery mode
   switch(receivedChar){            // process input
     case 'q':
     case 'Q':
+      showinput("q","char");
       Serial.println("Exiting...");
       status = EXIT_SUCCESS;
       break;
@@ -36,62 +88,95 @@ void exitMode() {                  // exit recovery mode
   }
 }
 
-void timeHourMinSec() {               
-  Serial.println("Please enter the current year, month, and day.");
-  while (Serial.available() == 0) {
-    // wait for input
-  }
-  String dateInput = Serial.readStringUntil('\n');    //read input until enter
-  dateInput.trim();                                  //remove any leading/trailing whitespace
-  
-  // basic format validation
-  if (dateInput.length() != 10 || dateInput.charAt(4) != '-' || dateInput.charAt(7) != '-') { 
-    Serial.println("Invalid date format. Please use YYYY-MM-DD format.");     
-    return;
-  }
-  
-  // extract year, month, and day
-  int year = dateInput.substring(0, 4).toInt();
-  int month = dateInput.substring(5, 7).toInt();
-  int day = dateInput.substring(8, 10).toInt();
+void template_time(String time1,String time2,String time3){
+  Serial.println("Please enter the");
+  Serial.print(time1.c_str());
+  Serial.print(", ");
+  Serial.print(time2.c_str());
+  Serial.print(" and ");
+  Serial.print(time3.c_str());
+}
 
-  // validate ranges
-  if (month < 1 || month > 12 || day < 1 || day > 31) {   
-    Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
-    return;
+
+ bool validation(const String Input, const String type){
+
+  // --- DATE VALIDATION LOGIC ---
+  if (type == "date"){
+    if (Input.length() != 10 || Input.charAt(4) != '-' || Input.charAt(7) != '-'){
+      Serial.println("Invalid date format. Please use YYYY-MM-DD format.");
+      return false; // Now the message prints before the return
+    }
+    
+    // Extract and assign to global variables
+    year = Input.substring(0, 4);
+    month =Input.substring(5, 7);
+    day = Input.substring(8, 10);
+
+    if (month < "1" || month > "12" || day < "1" || day > "31"){
+      Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
+      return false;
+    }
+    return true;
   }
 
+  // --- TIME VALIDATION LOGIC ---
+  if (type == "time"){
+    if (Input.length() != 8 || Input.charAt(2) != ':' || Input.charAt(5) != ':'){
+      Serial.println("Invalid time format. Please use HH:MM:SS format."); 
+      return false;
+    }
+    
+    // Extract time in hours,minutes and seconds.
+    hours = Input.substring(0, 2); 
+    minutes = Input.substring(3, 5);
+    seconds = Input.substring(6, 8);
+
+    if (hours < "1" || hours > "23" || minutes < "0 "|| minutes > "59" || seconds < "0" || seconds > "59") {
+      Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
+      return false;
+    }
+    return true;
+  }
+  
+  // Return false if the type argument was invalid (shouldn't happen here)
+  return false;
+}
+
+void timeHourMinSec() {      
+  bool dateValid = false;
+  while (!dateValid) { template_time("year", "month", "day");
+    while (Serial.available() == 0) {// wait for input}
+      String dateInput = Serial.readStringUntil('\n');    //read input until enter
+      showinput(dateInput,"Sentence");
+      dateInput.trim();                                  //remove any leading/trailing whitespace 
+  dateValid=validation(dateInput,"date");
+  return;}
+  if (!dateValid) {
+      // If invalid, the validation function prints the error message.
+      // We loop back to prompt the user again.
+      continue;
+      handleInput();
+    }
+  }
   // now get time
-  Serial.println("Please enter the current time in HH:MM:SS format.");
-  while (Serial.available() == 0) {
-    // wait for input
-  }
-
-  String timeInput = Serial.readStringUntil('\n');    //read input until enter
-  timeInput.trim();                                   //remove any leading/trailing whitespace
-
-  // basic format validation
-  if (timeInput.length() != 8 || timeInput.charAt(2) != ':' || timeInput.charAt(5) != ':') { 
-    Serial.println("Invalid time format. Please use HH:MM:SS format.");     
-    return;
-  }
-
-  // extract hours, minutes, and seconds
-  int hours = timeInput.substring(0, 2).toInt(); 
-  int minutes = timeInput.substring(3, 5).toInt();
-  int seconds = timeInput.substring(6, 8).toInt();
-
-  // validate ranges
-  if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {   
-    Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
-    return;
-  }
-
+  bool timeValid = false;
+  while (!timeValid) {
+    template_time("Hours:", "Minutes:", "Seconds"); // Prompt for time (removed colons)
+    while (Serial.available() == 0) {} // Wait for input
+    String timeInput = Serial.readStringUntil('\n'); 
+    timeInput.trim();
+    showinput(timeInput, "sentence"); 
+    // Validate the time, and update timeValid flag
+    timeValid = validation(timeInput, "time");
+    if (!timeValid) {
+      continue;
+      handleInput();
+  }                              
   // print formatted time on one line
   Serial.print("Time set to: ");
-  char buffer[25];
-  sprintf(buffer, "%04d-%02d-%02dT%02d:%02d:%02dZ", year, month, day, hours, minutes, seconds);
-  Serial.println(buffer);
+  String time_display= year + "-"+ month + "-"+day + "T" + hours + ":"+ minutes + ":"+ seconds + "Z";
+  Serial.println(time_display);
+}
 }
 
 int timeSetManual() {                // manual time setting
@@ -108,7 +193,9 @@ int timeSetAuto() {               // automatic time setting
   Serial.print(currentTime);
 
   Serial.println("Time synchronized. Please confirm this time is accurate.");
-  Serial.println("Press y to confirm, n to reject.");
+  instructiontemp('y');
+  Serial.print(" or ");
+  instructiontemp('n');
 
       while(!newData) {           // wait for new input
       recvOneChar();
@@ -118,12 +205,14 @@ int timeSetAuto() {               // automatic time setting
       switch (receivedChar) {
       case 'y':
       case 'Y':
+        showinput("y", "char");
         Serial.println("Time confirmed. Exiting...");
         status = EXIT_FAILURE;
         break;
 
       case 'n':
       case 'N':
+        showinput("n", "char");
         Serial.println("Time rejected. Please enter manual time setting mode.");
         status = timeSetManual();
         break;
@@ -137,8 +226,9 @@ int timeSetAuto() {               // automatic time setting
 }
 
 int setTimeMode() {                 // stub for setting time
-  Serial.println("Press s to set time, or a for automatic time sync.");
-
+  instructiontemp('s');
+  Serial.println(' or ');
+  instructiontemp('a');
   while(!newData) {                 // wait for new input
     recvOneChar();
   }
@@ -147,12 +237,14 @@ int setTimeMode() {                 // stub for setting time
   switch(receivedChar){
     case 's':
     case 'S':
+      showinput("s", "char");
       timeSetManual();                 //manual time set
       status = EXIT_SUCCESS;
       break;
 
     case 'a':
     case 'A':
+      showinput("a", "char");
       timeSetAuto();                //automatic time set
       status = EXIT_SUCCESS;
       break;
@@ -167,15 +259,16 @@ int setTimeMode() {                 // stub for setting time
 }
 
 int flashDumpMode() {               // dump entire flash
-  Serial.println("Press y to dump entire flash, any other key to exit.");
+  Serial.println('d');
 
   while(!newData) {                 // wait for new input
     recvOneChar();
   }
 
   switch(receivedChar){
-    case 'y':
-    case 'Y':
+    case 'd':
+    case 'D':
+      showinput("d", "char");
       Serial.println("Dumping entire flash...");
       flashDumpAll();
       status = EXIT_SUCCESS;
@@ -196,12 +289,14 @@ void handleInput() {
     switch (receivedChar){
     case 't':
     case 'T':
+      showinput("t", "char");
       status = setTimeMode();
       Serial.println(status);
       break;
 
     case 'f':
     case 'F':
+      showinput("f", "char");
       status = flashDumpMode();
       Serial.println(status);
       break;
@@ -223,7 +318,9 @@ void recovery() {                 // recovery mode
   newData = false;
 
   while (true) {                // main recovery loop  
-    Serial.println("Press 't' to set the time, or 'f' to read the flash.");
+    instructiontemp('t');
+    Serial.print(" or ");
+    instructiontemp('f');
     newData = false;
 
     while(!newData) { 
