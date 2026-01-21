@@ -5,6 +5,11 @@
 #include "recovery.h"
 #include "watchdog.hpp"
 #include "time.h"   // RTC support
+#include "adcs.h"
+#include "save.h"
+
+// Initialise character variables
+char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered";
 
 void setup() {
     // -------------------- Setup --------------------
@@ -13,6 +18,7 @@ void setup() {
 
     flashInit();                 // initialize SPI flash
     rtcInit();                   // initialize RTC
+    initADCS();                  // initialise ADCS
 
     pinMode(PB2, INPUT);         // recovery mode pin
     if (digitalRead(PB2) == HIGH) {
@@ -27,11 +33,23 @@ void loop() {
     blink(PD_13);                     // blink status LED
     Serial.printf("TMP: %i\n", tmp());  // print TMP value
 
+
+    iwdg::pet_watch_dog();
+
     // Optional: print RTC time periodically
     static unsigned long lastPrint = 0;
-    if (millis() - lastPrint >= 1000) {
+    if (millis() - lastPrint >= 10000) {
         Serial.printf("RTC Time: %s\n", rtcGetTime());
         lastPrint = millis();
+        readADCS(dataFromADCS);
+
+        iwdg::pet_watch_dog();
+
+        Serial.println(dataFromADCS);
+
+        saveState(dataFromADCS, strlen(dataFromADCS));
+
+        iwdg::pet_watch_dog();
     }
 
     delay(50);
