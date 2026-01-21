@@ -8,6 +8,17 @@
 #include "adcs.h"
 #include "save.h"
 
+
+// Temp comms handling in main
+#include "LoRa_E32.h"
+#include <HardwareSerial.h>
+#define COMMS_BROADCAST_CHANNEL 0x04
+
+// Temp comms innit
+HardwareSerial uart0(PA10, PA9);
+LoRa_E32 comms(&uart0, UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
+
+
 // Initialise character variables
 char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered";
 
@@ -24,6 +35,12 @@ void setup() {
     if (digitalRead(PB2) == HIGH) {
         recovery();              // enter recovery mode if pin is high
     }
+
+    // Comms CFG pin
+    pinMode(PC6, OUTPUT);
+    digitalWriteFast(PC_6, LOW);
+
+    comms.begin();
 
     iwdg::init_watchdog();
 }
@@ -47,11 +64,20 @@ void loop() {
 
         Serial.println(dataFromADCS);
 
+        iwdg::pet_watch_dog();
+
         saveState(dataFromADCS, strlen(dataFromADCS));
+
+        iwdg::pet_watch_dog();
+
+        //comms.sendMessage(dataFromADCS);
+        //comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, dataFromADCS);
 
         iwdg::pet_watch_dog();
     }
 
+
+    iwdg::pet_watch_dog();
     delay(50);
     iwdg::pet_watch_dog();
 }
