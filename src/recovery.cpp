@@ -67,7 +67,7 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
   Serial.print(action.c_str());
 }
 void exitMode() {                  // exit recovery mode
-  instructiontemp('q');
+  instructionTemp('q');
   while(!newData) {                // wait for new input
     recvOneChar();
   }
@@ -144,10 +144,10 @@ void templateTime(String time1,String time2,String time3){
 
 void timeHourMinSec() {      
   bool dateValid = false;
-  while (!dateValid) { template_time("year", "month", "day");
+  while (!dateValid) {templateTime("year", "month", "day");
     while (Serial.available() == 0) {// wait for input}
       String dateInput = Serial.readStringUntil('\n');    //read input until enter
-      showinput(dateInput,"Sentence");
+      showInput(dateInput,"Sentence");
       dateInput.trim();                                  //remove any leading/trailing whitespace 
   dateValid=validation(dateInput,"date");
   return;}
