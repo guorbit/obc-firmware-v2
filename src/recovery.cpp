@@ -21,7 +21,7 @@ void recvOneChar() {              // receive one character
   }
 }
 
-void showinput(const String character, const String word){ // if the word input is character or sentance input, then they will be shown. 
+void showInput(const String character, const String word){ // if the word input is character or sentance input, then they will be shown. 
   if (word=="char"){
     String character = "";
     character=receivedChar;
@@ -33,7 +33,7 @@ void showinput(const String character, const String word){ // if the word input 
     newData= false;
    }
 }
-void instructiontemp(char receivedChar){ // Press 'char' to 'excute the action'
+void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
   String action;
   Serial.print("Press ");
   Serial.print(receivedChar);
@@ -76,7 +76,7 @@ void exitMode() {                  // exit recovery mode
   switch(receivedChar){            // process input
     case 'q':
     case 'Q':
-      showinput("q","char");
+      showInput("q","char");
       Serial.println("Exiting...");
       status = EXIT_SUCCESS;
       break;
@@ -88,7 +88,7 @@ void exitMode() {                  // exit recovery mode
   }
 }
 
-void template_time(String time1,String time2,String time3){
+void templateTime(String time1,String time2,String time3){
   Serial.println("Please enter the");
   Serial.print(time1.c_str());
   Serial.print(", ");
@@ -161,11 +161,11 @@ void timeHourMinSec() {
   // now get time
   bool timeValid = false;
   while (!timeValid) {
-    template_time("Hours:", "Minutes:", "Seconds"); // Prompt for time (removed colons)
+    templateTime("Hours:", "Minutes:", "Seconds"); // Prompt for time (removed colons)
     while (Serial.available() == 0) {} // Wait for input
     String timeInput = Serial.readStringUntil('\n'); 
     timeInput.trim();
-    showinput(timeInput, "sentence"); 
+    showInput(timeInput, "sentence"); 
     // Validate the time, and update timeValid flag
     timeValid = validation(timeInput, "time");
     if (!timeValid) {
@@ -193,9 +193,9 @@ int timeSetAuto() {               // automatic time setting
   Serial.print(currentTime);
 
   Serial.println("Time synchronized. Please confirm this time is accurate.");
-  instructiontemp('y');
+  instructionTemp('y');
   Serial.print(" or ");
-  instructiontemp('n');
+  instructionTemp('n');
 
       while(!newData) {           // wait for new input
       recvOneChar();
@@ -205,14 +205,14 @@ int timeSetAuto() {               // automatic time setting
       switch (receivedChar) {
       case 'y':
       case 'Y':
-        showinput("y", "char");
+        showInput("y", "char");
         Serial.println("Time confirmed. Exiting...");
         status = EXIT_FAILURE;
         break;
 
       case 'n':
       case 'N':
-        showinput("n", "char");
+        showInput("n", "char");
         Serial.println("Time rejected. Please enter manual time setting mode.");
         status = timeSetManual();
         break;
@@ -226,9 +226,9 @@ int timeSetAuto() {               // automatic time setting
 }
 
 int setTimeMode() {                 // stub for setting time
-  instructiontemp('s');
+  instructionTemp('s');
   Serial.println(' or ');
-  instructiontemp('a');
+  instructionTemp('a');
   while(!newData) {                 // wait for new input
     recvOneChar();
   }
@@ -237,14 +237,14 @@ int setTimeMode() {                 // stub for setting time
   switch(receivedChar){
     case 's':
     case 'S':
-      showinput("s", "char");
+      showInput("s", "char");
       timeSetManual();                 //manual time set
       status = EXIT_SUCCESS;
       break;
 
     case 'a':
     case 'A':
-      showinput("a", "char");
+      showInput("a", "char");
       timeSetAuto();                //automatic time set
       status = EXIT_SUCCESS;
       break;
@@ -268,7 +268,7 @@ int flashDumpMode() {               // dump entire flash
   switch(receivedChar){
     case 'd':
     case 'D':
-      showinput("d", "char");
+      showInput("d", "char");
       Serial.println("Dumping entire flash...");
       flashDumpAll();
       status = EXIT_SUCCESS;
@@ -289,14 +289,14 @@ void handleInput() {
     switch (receivedChar){
     case 't':
     case 'T':
-      showinput("t", "char");
+      showInput("t", "char");
       status = setTimeMode();
       Serial.println(status);
       break;
 
     case 'f':
     case 'F':
-      showinput("f", "char");
+      showInput("f", "char");
       status = flashDumpMode();
       Serial.println(status);
       break;
@@ -318,9 +318,9 @@ void recovery() {                 // recovery mode
   newData = false;
 
   while (true) {                // main recovery loop  
-    instructiontemp('t');
+    instructionTemp('t');
     Serial.print(" or ");
-    instructiontemp('f');
+    instructionTemp('f');
     newData = false;
 
     while(!newData) { 
