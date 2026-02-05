@@ -40,7 +40,7 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
   Serial.print(" to ");
   switch(receivedChar){
     case 'q':
-    action="exit";
+    action="exit.";
     break;
     case 's':
     action="set time";
@@ -49,7 +49,7 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
     action="automatic time sync.";
     break;
     case 'y':
-    action="confirm";
+    action="confirm.";
     break;
     case 'n':
     action="reject.";
@@ -66,6 +66,7 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
   }
   Serial.print(action.c_str());
 }
+void handleInput();
 void exitMode() {                  // exit recovery mode
   instructionTemp('q');
   while(!newData) {                // wait for new input
@@ -89,7 +90,7 @@ void exitMode() {                  // exit recovery mode
 }
 
 void templateTime(String time1,String time2,String time3){
-  Serial.println("Please enter the");
+  Serial.print("Please enter the ");
   Serial.print(time1.c_str());
   Serial.print(", ");
   Serial.print(time2.c_str());
@@ -112,8 +113,8 @@ void templateTime(String time1,String time2,String time3){
     month =Input.substring(5, 7);
     day = Input.substring(8, 10);
 
-    if (month < "1" || month > "12" || day < "1" || day > "31"){
-      Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
+    if (month < "01" || month > "12" || day < "01" || day > "31"){
+      Serial.println("Invalid date values. Please ensure month is 01-12 and day is 01-31.");
       return false;
     }
     return true;
@@ -131,8 +132,8 @@ void templateTime(String time1,String time2,String time3){
     minutes = Input.substring(3, 5);
     seconds = Input.substring(6, 8);
 
-    if (hours < "1" || hours > "23" || minutes < "0 "|| minutes > "59" || seconds < "0" || seconds > "59") {
-      Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
+    if (hours < "01" || hours > "23" || minutes < "00"|| minutes > "59" || seconds < "00" || seconds > "59") {
+      Serial.println("Invalid time values. Please ensure hours are 01-23, minutes and seconds are 00-59.");
       return false;
     }
     return true;
@@ -145,17 +146,17 @@ void templateTime(String time1,String time2,String time3){
 void timeHourMinSec() {      
   bool dateValid = false;
   while (!dateValid) {templateTime("year", "month", "day");
-    while (Serial.available() == 0) {// wait for input}
+    while (Serial.available() == 0) {// wait for input
       String dateInput = Serial.readStringUntil('\n');    //read input until enter
-      showInput(dateInput,"Sentence");
-      dateInput.trim();                                  //remove any leading/trailing whitespace 
+      dateInput.trim(); //remove any leading/trailing whitespace
+      showInput(dateInput,"sentence");                                
   dateValid=validation(dateInput,"date");
-  return;}
+  }
   if (!dateValid) {
       // If invalid, the validation function prints the error message.
       // We loop back to prompt the user again.
-      continue;
       handleInput();
+      continue;
     }
   }
   // now get time
@@ -169,8 +170,8 @@ void timeHourMinSec() {
     // Validate the time, and update timeValid flag
     timeValid = validation(timeInput, "time");
     if (!timeValid) {
-      continue;
       handleInput();
+      continue;
   }                              
   // print formatted time on one line
   Serial.print("Time set to: ");
@@ -227,7 +228,7 @@ int timeSetAuto() {               // automatic time setting
 
 int setTimeMode() {                 // stub for setting time
   instructionTemp('s');
-  Serial.println(' or ');
+  Serial.print(" or ");
   instructionTemp('a');
   while(!newData) {                 // wait for new input
     recvOneChar();
@@ -309,11 +310,12 @@ void handleInput() {
 }
 
 void recovery() {                 // recovery mode
-  Serial.println("Entered recovery mode. \nPress any key to continue.");
-  Serial.setTimeout(60000);   // set timeout to 60 seconds
-
+    // set timeout to 60 seconds
+    Serial.println("Entered recovery mode. \nPress any key to continue.");
+    Serial.setTimeout(60000);
   while(!newData) {              // wait for new input 
     recvOneChar();
+    
   }
   newData = false;
 
@@ -326,7 +328,6 @@ void recovery() {                 // recovery mode
     while(!newData) { 
       recvOneChar();
     }
-
     handleInput(); 
 
   }
