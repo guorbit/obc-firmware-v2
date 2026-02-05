@@ -113,8 +113,13 @@ void templateTime(String time1,String time2,String time3){
     month =Input.substring(5, 7);
     day = Input.substring(8, 10);
 
-    if (month < "01" || month > "12" || day < "01" || day > "31"){
-      Serial.println("Invalid date values. Please ensure month is 01-12 and day is 01-31.");
+    //convert to integers for range checking
+    int yearInt = year.toInt();
+    int monthInt = month.toInt();
+    int dayint = day.toInt();
+  
+    if (monthInt < 1 || monthInt > 12 || dayint < 1 || dayint > 31){
+      Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
       return false;
     }
     return true;
@@ -131,9 +136,13 @@ void templateTime(String time1,String time2,String time3){
     hours = Input.substring(0, 2); 
     minutes = Input.substring(3, 5);
     seconds = Input.substring(6, 8);
+    int hoursInt = hours.toInt();
+    int minutesInt = minutes.toInt();
+    int secondsInt = seconds.toInt();
 
-    if (hours < "01" || hours > "23" || minutes < "00"|| minutes > "59" || seconds < "00" || seconds > "59") {
-      Serial.println("Invalid time values. Please ensure hours are 01-23, minutes and seconds are 00-59.");
+
+    if (hoursInt < 1 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59 || secondsInt < 0 || secondsInt > 59) {
+      Serial.println("Invalid time values. Please ensure hours are 1-23, minutes and seconds are 0-59.");
       return false;
     }
     return true;
@@ -146,12 +155,12 @@ void templateTime(String time1,String time2,String time3){
 void timeHourMinSec() {      
   bool dateValid = false;
   while (!dateValid) {templateTime("year", "month", "day");
-    while (Serial.available() == 0) {// wait for input
+    while (Serial.available() == 0) {}// wait for input
       String dateInput = Serial.readStringUntil('\n');    //read input until enter
       dateInput.trim(); //remove any leading/trailing whitespace
       showInput(dateInput,"sentence");                                
   dateValid=validation(dateInput,"date");
-  }
+  
   if (!dateValid) {
       // If invalid, the validation function prints the error message.
       // We loop back to prompt the user again.
@@ -162,7 +171,7 @@ void timeHourMinSec() {
   // now get time
   bool timeValid = false;
   while (!timeValid) {
-    templateTime("Hours:", "Minutes:", "Seconds"); // Prompt for time (removed colons)
+    templateTime("Hours", "Minutes", "Seconds"); // Prompt for time (removed colons)
     while (Serial.available() == 0) {} // Wait for input
     String timeInput = Serial.readStringUntil('\n'); 
     timeInput.trim();
