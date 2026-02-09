@@ -54,7 +54,7 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
     case 'n':
     action="reject.";
     case 't':
-    action="set the time.";
+    action="set the time";
     break;
     case 'f':
     action="read the flash.";
