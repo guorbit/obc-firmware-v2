@@ -5,6 +5,7 @@
 #include "recovery.h"
 #include "watchdog.hpp"
 #include "time.h"   // RTC support
+#include "heater.h" // heater function support
 
 void setup() {
     // -------------------- Setup --------------------
@@ -13,6 +14,7 @@ void setup() {
 
     flashInit();                 // initialize SPI flash
     rtcInit();                   // initialize RTC
+    heaterInit();                // initialize heater function
 
     pinMode(PB2, INPUT);         // recovery mode pin
     if (digitalRead(PB2) == HIGH) {
