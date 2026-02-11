@@ -214,8 +214,15 @@ void handleInput() {
 }
 
 void recovery() {                 // recovery mode
-  Serial.println("Entered recovery mode. \nPress any key to continue.");
   Serial.setTimeout(60000);   // set timeout to 60 seconds
+
+  while(!newData) {              // wait for new input 
+    recvOneChar();
+  }
+  newData = false;
+
+  Serial.println("Entered recovery mode. \nPress enter to continue.");
+  delay(1000);
 
   while(!newData) {              // wait for new input 
     recvOneChar();

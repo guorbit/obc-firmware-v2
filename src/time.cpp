@@ -3,24 +3,34 @@
 #include "stm32f4xx_hal_rtc.h"  // Include RTC-specific types/functions
 #include <cstdio>
 #include <cstring>
+#include <Arduino.h>
+#include <string.h>
 
 RTC_HandleTypeDef hrtc;  // Define the RTC handle globally
 
 // -------------------- RTC Setup -------------------
-void rtcSetTime() // Initialise RTC with a specific time and date
-{
+void rtcSetTime(char* isotime){ // Initialise RTC with a specific time and date   
+
     RTC_TimeTypeDef sTime = {0};
     RTC_DateTypeDef sDate = {0};
-    // Set time manually to 00:00:00
-    sTime.Hours = 00;
-    sTime.Minutes = 00;
-    sTime.Seconds = 00;
+
+    if (strlen(isotime) < 19) {
+        // If no valid time string is provided, use a default time
+        char isotime[21] = "2026-01-01T00:00:00Z"; 
+    }
+
+    int year, month, day, hour, minute, second;
+    sscanf(isotime, "%4d-%2d-%2dT%2d:%2d:%2dZ", &year, &month, &day, &hour, &minute, &second);
+    int yearShort = year - 2000; // RTC year is offset from 2000
+
+    sTime.Hours = (u_int8_t)hour;
+    sTime.Minutes = (u_int8_t)minute;
+    sTime.Seconds = (u_int8_t)second;
     HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 
-    sDate.WeekDay = RTC_WEEKDAY_SATURDAY;
-    sDate.Month = RTC_MONTH_NOVEMBER;
-    sDate.Date = 01;
-    sDate.Year = 25; // for 2025
+    sDate.Year = (u_int8_t)yearShort; // RTC year is offset from 2000
+    sDate.Month = (u_int8_t)month;
+    sDate.Date = (u_int8_t)day;
     HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 }
 
@@ -76,7 +86,8 @@ extern "C" void rtcInit()
     if (HAL_RTCEx_BKUPRead(&hrtc, RTC_BKP_DR1) != 0x32F2)
     {
         // First time: set time and mark backup register
-        rtcSetTime();
+        char setTime[21] = "2026-01-01T00:00:00Z";
+        rtcSetTime(setTime); // Set default time
         HAL_RTCEx_BKUPWrite(&hrtc, RTC_BKP_DR1, 0x32F2);
         __HAL_RCC_CLEAR_RESET_FLAGS(); // Clear reset flags
     }
