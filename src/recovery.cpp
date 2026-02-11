@@ -6,12 +6,12 @@ char receivedChar;
 bool newData = false; 
 int status = EXIT_SUCCESS;
 // Initialized string time and year values for the validation function
-String year="0";
-String month = "0";
-String day = "0";
-String hours = "0";
-String minutes = "0";
-String seconds = "0";
+char year[5];
+char month[3];
+char day[3];
+char hours[3];
+char minutes[3];
+char seconds[3];
 
 void recvOneChar() {              // receive one character
   if (Serial.available() > 0) {
@@ -21,15 +21,13 @@ void recvOneChar() {              // receive one character
   }
 }
 
-void showInput(const String character, const String word){ // if the word input is character or sentance input, then they will be shown. 
-  if (word=="char"){
-    String character = "";
-    character=receivedChar;
+void showInput(const char* input, const char* word){ // if the word input is character or sentance input, then they will be shown. 
+  if (strcmp(word,"char")==0){
     Serial.println(receivedChar);
     newData= false;
   }
-  else if (word=="sentence"){
-    Serial.println(character);
+  else if (strcmp(word,"sentence")==0){
+    Serial.println(input);
     newData= false;
    }
 }
@@ -67,6 +65,14 @@ void instructionTemp(char receivedChar){ // Press 'char' to 'excute the action'
   Serial.print(action.c_str());
 }
 void handleInput();
+void readline(char*buffer,size_t maxlen){
+  while (Serial.available() == 0) {} // Wait for input
+  size_t len = Serial.readBytesUntil('\n', buffer, maxlen - 1); // Read input until newline, leaving space for null terminator
+  buffer[len] = '\0'; // Null-terminate the string  
+  // Clear leftover newline or extra characters
+    while (Serial.available()) Serial.read();
+}
+
 void exitMode() {                  // exit recovery mode
   instructionTemp('q');
   while(!newData) {                // wait for new input
@@ -99,24 +105,37 @@ void templateTime(String time1,String time2,String time3){
 }
 
 
- bool validation(const String Input, const String type){
+ bool validation(const char*input, const char* type){
 
   // --- DATE VALIDATION LOGIC ---
-  if (type == "date"){
-    if (Input.length() != 10 || Input.charAt(4) != '-' || Input.charAt(7) != '-'){
+  if (strcmp(type, "date") == 0){
+    if (strlen(input) != 10 || input[4] != '-' || input[7] != '-'){
       Serial.println("Invalid date format. Please use YYYY-MM-DD format.");
       return false; // Now the message prints before the return
     }
     
     // Extract and assign to global variables
-    year = Input.substring(0, 4);
-    month =Input.substring(5, 7);
-    day = Input.substring(8, 10);
+    char year[5];
+    year[0] = input[0];
+    year[1] = input[1];
+    year[2] = input[2];
+    year[3] = input[3];
+    year[4] = '\0'; // Null terminate the string
+
+    char month[3];
+    month[0] = input[5];
+    month[1] = input[6];
+    month[2] = '\0'; // Null terminate the string
+
+    char day[3];
+    day[0] = input[8];
+    day[1] = input[9];
+    day[2] = '\0'; // Null terminate the string
 
     //convert to integers for range checking
-    int yearInt = year.toInt();
-    int monthInt = month.toInt();
-    int dayint = day.toInt();
+    int yearInt = atoi(year);
+    int monthInt = atoi(month);
+    int dayint = atoi(day)  ;
   
     if (monthInt < 1 || monthInt > 12 || dayint < 1 || dayint > 31){
       Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
@@ -126,23 +145,35 @@ void templateTime(String time1,String time2,String time3){
   }
 
   // --- TIME VALIDATION LOGIC ---
-  if (type == "time"){
-    if (Input.length() != 8 || Input.charAt(2) != ':' || Input.charAt(5) != ':'){
+  if (strcmp(type, "time") == 0){
+    if (strlen(input) != 8 || input[2] != ':' || input[5] != ':'){
       Serial.println("Invalid time format. Please use HH:MM:SS format."); 
       return false;
     }
     
     // Extract time in hours,minutes and seconds.
-    hours = Input.substring(0, 2); 
-    minutes = Input.substring(3, 5);
-    seconds = Input.substring(6, 8);
-    int hoursInt = hours.toInt();
-    int minutesInt = minutes.toInt();
-    int secondsInt = seconds.toInt();
+    char hours[3];
+    hours[0] = input[0];
+    hours[1] = input[1];
+    hours[2] = '\0'; // Null terminate the string
+
+    char minutes[3];
+    minutes[0] = input[3];
+    minutes[1] = input[4];
+    minutes[2] = '\0'; // Null terminate the string
+
+    char seconds[3];
+    seconds[0] = input[6];
+    seconds[1] = input[7];
+    seconds[2] = '\0'; // Null terminate the string
+
+    int hoursInt = atoi(hours);
+    int minutesInt = atoi(minutes);
+    int secondsInt = atoi(seconds);
 
 
-    if (hoursInt < 1 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59 || secondsInt < 0 || secondsInt > 59) {
-      Serial.println("Invalid time values. Please ensure hours are 1-23, minutes and seconds are 0-59.");
+    if (hoursInt < 0 || hoursInt > 23 || minutesInt < 0 || minutesInt > 59 || secondsInt < 0 || secondsInt > 59) {
+      Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
       return false;
     }
     return true;
@@ -156,10 +187,10 @@ void timeHourMinSec() {
   bool dateValid = false;
   while (!dateValid) {templateTime("year", "month", "day");
     while (Serial.available() == 0) {}// wait for input
-      String dateInput = Serial.readStringUntil('\n');    //read input until enter
-      dateInput.trim(); //remove any leading/trailing whitespace
-      showInput(dateInput,"sentence");                                
-  dateValid=validation(dateInput,"date");
+      char Date_Input[11]; // Buffer to hold the date input (10 chars + null terminator)
+      readline(Date_Input, 11); // Read the date input using the readline function
+      showInput(Date_Input,"sentence");                                
+  dateValid=validation(Date_Input,"date");
   
   if (!dateValid) {
       // If invalid, the validation function prints the error message.
@@ -173,18 +204,19 @@ void timeHourMinSec() {
   while (!timeValid) {
     templateTime("Hours", "Minutes", "Seconds"); // Prompt for time (removed colons)
     while (Serial.available() == 0) {} // Wait for input
-    String timeInput = Serial.readStringUntil('\n'); 
-    timeInput.trim();
-    showInput(timeInput, "sentence"); 
+    char Time_Input[11]; // Buffer to hold the date input (10 chars + null terminator)
+    readline(Time_Input, 11); // Read the date input using the readline function
+    showInput(Time_Input,"sentence");      
     // Validate the time, and update timeValid flag
-    timeValid = validation(timeInput, "time");
+    timeValid = validation(Time_Input, "time");
     if (!timeValid) {
       handleInput();
       continue;
   }                              
   // print formatted time on one line
   Serial.print("Time set to: ");
-  String time_display= year + "-"+ month + "-"+day + "T" + hours + ":"+ minutes + ":"+ seconds + "Z";
+  char time_display[25];
+  sprintf(time_display, "%s-%s-%sT%s:%s:%sZ", year, month, day, hours, minutes, seconds);
   Serial.println(time_display);
 }
 }
