@@ -5,6 +5,7 @@
 #include "recovery.h"
 #include "watchdog.hpp"
 #include "time.h"   // RTC support
+#include "heater.h" // heater function support
 #include "adcs.h"
 #include "save.h"
 
@@ -29,6 +30,7 @@ void setup() {
 
     flashInit();                 // initialize SPI flash
     rtcInit();                   // initialize RTC
+    heaterInit();                // initialize heater function
     initADCS();                  // initialise ADCS
 
     pinMode(PB2, INPUT);         // recovery mode pin
