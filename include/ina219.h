@@ -38,7 +38,7 @@
 // default values
 #define INA219_DEFAULT_I2C_ADDRESS  0x40    // (64) Default address with A0/A1 tied low
 #define INA219_DEFAULT_SHUNT_OHMS   0.1f    // Common 0.1 ohm shunt (was 0.25)
-#define INA219_DEFAULT_VBUS_MAX     32.0f   // 32V Bus max (reflecting common 32V range)
+#define INA219_DEFAULT_VBUS_MAX     26.0f   // 26V Bus max (reflecting 26V limit of INA219)
 #define INA219_DEFAULT_IMAX_EXPECTED 1.0f   // 1 Amp max expected current
 
 
@@ -48,7 +48,7 @@ class INA219
 	INA219();
 	
 	// by default uses addr = 0x40 (both a-pins tied low)
-	void begin(uint8_t addr = INA219_DEFAULT_I2C_ADDRESS);
+	void begin(TwoWire *theWire = &Wire, uint8_t addr = INA219_DEFAULT_I2C_ADDRESS);
 
 	void calibrate(float r_shunt  = INA219_DEFAULT_SHUNT_OHMS, 
                    float v_bus_max = INA219_DEFAULT_VBUS_MAX, 
@@ -67,6 +67,7 @@ class INA219
 
 
   private:
+	TwoWire *_i2c;
 	uint8_t i2c_address;
 	float r_shunt, current_lsb, power_lsb;
 	uint16_t calibration_value;

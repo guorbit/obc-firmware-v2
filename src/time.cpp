@@ -85,7 +85,7 @@ extern "C" void rtcInit()
 // -------------------- Get Time --------------------
 const char* rtcGetTime()
 {
-    static char buffer[32];  // Holds formatted time text
+    static char buffer[20];  // Holds formatted time text
 
     RTC_TimeTypeDef sTime;
     RTC_DateTypeDef sDate;
@@ -96,7 +96,7 @@ const char* rtcGetTime()
 
     // Format the values into a readable string: "YYYY-MM-DD HH:MM:SS"
     snprintf(buffer, sizeof(buffer),
-             "%04d-%02d-%02dT%02d:%02d:%02dZ\r\n",
+             "%04d-%02d-%02dT%02d:%02d:%02dZ",
              sDate.Year + 2000, sDate.Month, sDate.Date,
              sTime.Hours, sTime.Minutes, sTime.Seconds);
 
