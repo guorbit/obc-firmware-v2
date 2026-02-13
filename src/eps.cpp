@@ -1,6 +1,7 @@
 #include "eps.h"
 #include "ina219.h"
 #include "ltc4162.h"
+#include <Wire.h>
 
 INA219 fiveVolt_monitor;   // create INA219 instance for 5V bus monitoring
 INA219 threeVolt3_monitor; // create INA219 instance for 3.3V bus monitoring
