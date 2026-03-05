@@ -6,7 +6,7 @@
 
 // Set the length of the output from the 
 //  ADCS board, in bytes.  
-#define READOUT_LENGTH_ADCS 32
+#define READOUT_LENGTH_ADCS 103
 
 // Set the I²C clock frequency
 #define ADCS_I2C_SPEED 100000
