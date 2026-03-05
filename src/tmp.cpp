@@ -17,6 +17,5 @@ int tmp(){
     value = analogRead(TMP_PIN);
     voltage = (value / ADC_STEPS) * V_REF; // convert to voltage
     temp = (voltage - 0.5f) * 100; // convert to temperature in C
-    
     return temp;
-}
+};
