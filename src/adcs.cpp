@@ -20,6 +20,13 @@ int readADCS(char* adcsData) {
         } 
     }
 
+    // desync check
+    if (adcsData[0] != 't'){
+        i2c1.beginTransmission(ADCS_I2C_ADDRESS);
+        i2c1.write(0xFF); // write one byte
+        i2c1.endTransmission();
+    }
+
     /*
     while (i2c1.available()) {
         char c = i2c1.read();
