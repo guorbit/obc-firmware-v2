@@ -25,6 +25,7 @@ int readADCS(char* adcsData) {
         i2c1.beginTransmission(ADCS_I2C_ADDRESS);
         i2c1.write(0xFF); // write one byte
         i2c1.endTransmission();
+        return EXIT_FAILURE; // try again next loop
     }
 
     /*
