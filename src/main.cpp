@@ -15,7 +15,7 @@
 // #include <HardwareSerial.h>
 // #define COMMS_BROADCAST_CHANNEL 0x04
 
-// Temp comms innit
+// Temp comms init
 // HardwareSerial uart0(PA10, PA9);
 // LoRa_E32 comms(&uart0, UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
 
