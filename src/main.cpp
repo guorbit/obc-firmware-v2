@@ -115,6 +115,10 @@ void loop() {
 
         // [Debug mode] print message
         #if OBC_DEBUG
+
+        Serial.println(obcMessage);
+
+
         iwdg::pet_watch_dog();
 
         #endif
