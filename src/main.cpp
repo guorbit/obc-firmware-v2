@@ -21,7 +21,7 @@ LoRa_E32 comms(&uart0, UART_BPS_RATE_9600); // Config without connect AUX and M0
 
 
 // Initialise character variables
-char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered";
+char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
 
 void setup() {
     // -------------------- Setup --------------------
