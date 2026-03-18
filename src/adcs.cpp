@@ -21,12 +21,12 @@ int readADCS(char* adcsData) {
     }
 
     // desync check
-    if (adcsData[0] != 't'){
-        i2c1.beginTransmission(ADCS_I2C_ADDRESS);
-        i2c1.write(0xFF); // write one byte
-        i2c1.endTransmission();
-        return EXIT_FAILURE; // try again next loop
-    }
+    // if (adcsData[0] != 't'){
+    //     i2c1.beginTransmission(ADCS_I2C_ADDRESS);
+    //     i2c1.write(0xFF); // write one byte
+    //     i2c1.endTransmission();
+    //     return EXIT_FAILURE; // try again next loop
+    // }
 
     /*
     while (i2c1.available()) {
