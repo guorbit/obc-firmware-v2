@@ -25,8 +25,8 @@ void epsInit() {
   threeVolt3_monitor.calibrate();
 
   // Initialize LTC4162
-  // TODO: I don't know why this Serial.begin was here... remove it if everythin works. 
-  // Serial.begin(115200);
+  // TODO: I don't know why this Serial.begin was here... remove it if everythin
+  // works. Serial.begin(115200);
   bat_ltc.begin(&i2c3, BATTERY_LTC_ADDR);
 }
 
@@ -34,14 +34,20 @@ const char *readEPS() {
   static char buffer[64];
 
   // Add PDM data to buffer
-  snprintf(buffer, sizeof(buffer), "%+0.2fV¦%+0.2fW¦%+0.2fV¦%+0.2fW",
+  snprintf(buffer, sizeof(buffer), "%+0.2fV%+0.2fW%+0.2fV%+0.2fW",
            fiveVolt_monitor.busVoltage(),   // 5V bus voltage
            fiveVolt_monitor.busPower(),     // 5V bus power
            threeVolt3_monitor.busVoltage(), // 3.3V bus voltage
            threeVolt3_monitor.busPower());  // 3.3V bus voltage
 
   // Add PCM data to buffer
-  // TODO: Not yet tested
+  snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "¦%+0.2fV%+0.6fA%+0.2fVᵢ%04X%04X%04X",
+           bat_ltc.readBatteryVoltage(), 
+           bat_ltc.readBatteryCurrent(),
+           bat_ltc.readInputVoltage(), 
+           bat_ltc.readChargeStatus(),
+           bat_ltc.readSystemStatus(), 
+           bat_ltc.readFaultStatus());
 
   /*// read and print EPS values
   Serial.print("5V Bus Voltage: ");

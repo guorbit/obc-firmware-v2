@@ -21,7 +21,7 @@ uint16_t LTC4162::read16(uint8_t reg_addr) {
 
     _i2c->requestFrom(i2c_address_ltc, (uint8_t)2); // request 2 bytes
     if (_i2c->available() < 2) 
-        return 0xFFFF;         // error check
+        return 0x0000;         // error check
 
     uint16_t highByte = _i2c->read(); 
     uint16_t lowByte = _i2c->read(); 
