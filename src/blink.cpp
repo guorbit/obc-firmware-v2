@@ -8,26 +8,18 @@ uint8_t currentIntervals = intervalsTotal - 1; // assigned intervalsTotal -1 to 
 unsigned long previousMillis = 0;      // time of the last interval
 unsigned long currentMillis = 0;
 
-void blink(PinName led)
-{
-  currentMillis = millis(); // the current uptime (milliseconds)
+void blink(PinName led) {
+  currentMillis = millis();
 
-  // if one interval has passed, then reset timer and iterate currentIntervals
-  if (currentMillis - previousMillis >= interval)
-  {
+  if (currentMillis - previousMillis >= interval) {
     previousMillis = currentMillis;
     currentIntervals++;
-  }
 
-  switch (currentIntervals)
-  {
-  case intervalsOn: // turn LED off at intervalsOn
-    digitalWriteFast(led, LOW);
-    break;
-  case intervalsTotal: // turn LED on and reset cycle at intervalsTotal
-    digitalWriteFast(led, HIGH);
-    currentIntervals = 0;
-    break;
+    // Use modulo to keep currentIntervals looping between 0 and 4
+    uint8_t cyclePosition = currentIntervals % intervalsTotal;
+
+    // If position is less than our "On" count, stay high, else low
+    digitalWriteFast(led, (cyclePosition < intervalsOn) ? HIGH : LOW);
   }
 
   // Reset counter if out of bounds

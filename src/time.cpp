@@ -96,7 +96,7 @@ extern "C" void rtcInit()
 // -------------------- Get Time --------------------
 const char* rtcGetTime()
 {
-    static char buffer[32];  // Holds formatted time text
+    static char buffer[20];  // Holds formatted time text
 
     RTC_TimeTypeDef sTime;
     RTC_DateTypeDef sDate;

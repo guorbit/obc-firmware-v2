@@ -1,9 +1,13 @@
-#include <Arduino.h>
 #include "blink.h"
-#include "tmp.h"
-#include "flash.h"  // SPI flash support 
+#include "eps.h"
+#include "flash.h" // SPI flash support
 #include "recovery.h"
+#include "save.h"
+#include "time.h" // RTC support
+#include "tmp.h"
 #include "watchdog.hpp"
+#include <Arduino.h>
+#include <Wire.h>
 #include "time.h"   // RTC support
 #include "heater.h" // heater function support
 #include "adcs.h"
@@ -38,11 +42,12 @@ void setup() {
     rtcInit();                   // initialize RTC
     heaterInit();                // initialize heater function
     adcsInit();                  // initialise ADCS
+    epsInit();                   // initialise EPS
 
-    pinMode(PB2, INPUT);         // recovery mode pin
-    if (digitalRead(PB2) == HIGH) {
-        recovery();              // enter recovery mode if pin is high
-    }
+  pinMode(PB2, INPUT); // recovery mode pin
+  if (digitalRead(PB2) == HIGH) {
+    recovery(); // enter recovery mode if pin is high
+  }
 
     // Comms CFG pin
     pinMode(PC6, OUTPUT);
@@ -87,23 +92,39 @@ void loop() {
 
         iwdg::pet_watch_dog();
 
+        // Begin buffer with opening square brace
+        snprintf(obcMessage, sizeof(obcMessage), "["); 
+
         // Compile message
-        snprintf(obcMessage, sizeof(obcMessage), "[%s",
-            rtcGetTime()); // begin buffer with > and time
+        iwdg::pet_watch_dog();
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "%s",
+            rtcGetTime()); // append time to buffer
+
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
             tmp()); // append TMP value to buffer
+        
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "|%s",
             dataFromADCS); // append ADCS data to buffer
+        
+        iwdg::pet_watch_dog();
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "|%s",
+            readEPS()); // append EPS readings to buffer
 
 
         // End buffer with closing square brace
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "]");
 
 
         // Save message
+        iwdg::pet_watch_dog();
         saveState(obcMessage, strlen(obcMessage));
 
         // Send message

@@ -1,0 +1,74 @@
+#include "eps.h"
+#include "ina219.h"
+#include "ltc4162.h"
+#include <Wire.h>
+
+INA219 fiveVolt_monitor;   // create INA219 instance for 5V bus monitoring
+INA219 threeVolt3_monitor; // create INA219 instance for 3.3V bus monitoring
+LTC4162 bat_ltc;           // create LTC4162 instance for battery management
+
+//*********************************************************************//
+//******************** EPS Initialization and Reading ******************//
+//*********************************************************************//
+
+void epsInit() {
+  // Initialize INA219 monitors
+  static TwoWire i2c3(EPS_I2C_SDA_PIN, EPS_I2C_SCL_PIN);
+  i2c3.setSDA(EPS_I2C_SDA_PIN);
+  i2c3.setSCL(EPS_I2C_SCL_PIN);
+  i2c3.begin();
+
+  fiveVolt_monitor.begin(&i2c3, FIVE_VOLT_MONITOR_ADDR);
+  fiveVolt_monitor.calibrate();
+
+  threeVolt3_monitor.begin(&i2c3, THREE_VOLT3_MONITOR_ADDR);
+  threeVolt3_monitor.calibrate();
+
+  // Initialize LTC4162
+  // TODO: I don't know why this Serial.begin was here... remove it if everythin
+  // works. Serial.begin(115200);
+  bat_ltc.begin(&i2c3, BATTERY_LTC_ADDR);
+}
+
+const char *readEPS() {
+  static char buffer[64];
+
+  // Add PDM data to buffer
+  snprintf(buffer, sizeof(buffer), "%+0.2fV%+0.2fW%+0.2fV%+0.2fW",
+           fiveVolt_monitor.busVoltage(),   // 5V bus voltage
+           fiveVolt_monitor.busPower(),     // 5V bus power
+           threeVolt3_monitor.busVoltage(), // 3.3V bus voltage
+           threeVolt3_monitor.busPower());  // 3.3V bus voltage
+
+  // Add PCM data to buffer
+  snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "¦%+0.2fV%+0.6fA%+0.2fVᵢ%04X%04X%04X",
+           bat_ltc.readBatteryVoltage(), 
+           bat_ltc.readBatteryCurrent(),
+           bat_ltc.readInputVoltage(), 
+           bat_ltc.readChargeStatus(),
+           bat_ltc.readSystemStatus(), 
+           bat_ltc.readFaultStatus());
+
+  /*// read and print EPS values
+  Serial.print("5V Bus Voltage: ");
+  Serial.println(fiveVolt_monitor.busVoltage());
+  Serial.print(" V");
+
+  Serial.print("3.3V Bus Voltage: ");
+  Serial.println(threeVolt3_monitor.busVoltage());
+  Serial.print(" V");
+
+  Serial.print("Battery Voltage: ");
+  Serial.println(bat_ltc.readBatteryVoltage());
+  Serial.print(" V");
+
+  Serial.print("Battery Current: ");
+  Serial.println(bat_ltc.readBatteryCurrent());
+  Serial.print(" A");
+
+  Serial.print("Input Voltage: ");
+  Serial.println(bat_ltc.readInputVoltage());
+  Serial.print(" V");*/
+
+  return buffer;
+}
