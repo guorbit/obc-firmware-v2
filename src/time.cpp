@@ -20,7 +20,7 @@ void rtcSetTime(char* isotime){ // Initialise RTC with a specific time and date
     }
 
     int year, month, day, hour, minute, second;
-    sscanf(isotime, "%4d%2d%2dT%2d%2d%2dZ", &year, &month, &day, &hour, &minute, &second);
+    sscanf(isotime, "%04d%02d%02dT%02d%02d%02dZ", &year, &month, &day, &hour, &minute, &second);
     int yearShort = year - 2000; // RTC year is offset from 2000
 
     sTime.Hours = (u_int8_t)hour;
