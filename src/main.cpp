@@ -130,8 +130,8 @@ void loop() {
         // Send message
         iwdg::pet_watch_dog();
 
-        //comms.sendMessage(dataFromADCS);
-        //comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, dataFromADCS);
+        comms.sendMessage(obcMessage);
+        //comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, obcMessage);
 
 
         // [Debug mode] print message
