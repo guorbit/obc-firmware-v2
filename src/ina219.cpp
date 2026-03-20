@@ -36,7 +36,7 @@ INA219::INA219() { // LSBs set to zero until calibration
 void INA219::begin(TwoWire *theWire, uint8_t addr) {
   _i2c = theWire;
   i2c_address = addr;
-  // Wire.begin();  // start i2c - now done in main.cpp init
+  // Wire.begin();  // start i2c - now done in epsInit
 }
 
 // calibration of equations and device

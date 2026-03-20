@@ -8,22 +8,23 @@ LTC4162::LTC4162() {
     i2c_address_ltc = LTC4162_I2C_ADDRESS;
 }
 
-void LTC4162::begin(uint8_t addr) {
+void LTC4162::begin(TwoWire *theWire, uint8_t addr) {
+    _i2c = theWire;
     i2c_address_ltc = addr;
-    Wire.begin();  // start i2c
+    //_i2c->begin();  // now done in epsInit
 }
 
 uint16_t LTC4162::read16(uint8_t reg_addr) {
-    Wire.beginTransmission(i2c_address_ltc); 
-    Wire.write(reg_addr);                   // register address
-    Wire.endTransmission(false);            // end transmission but keep i2c active  
+    _i2c->beginTransmission(i2c_address_ltc); 
+    _i2c->write(reg_addr);                   // register address
+    _i2c->endTransmission(false);            // end transmission but keep i2c active  
 
-    Wire.requestFrom(i2c_address_ltc, (uint8_t)2); // request 2 bytes
-    if (Wire.available() < 2) 
+    _i2c->requestFrom(i2c_address_ltc, (uint8_t)2); // request 2 bytes
+    if (_i2c->available() < 2) 
         return 0xFFFF;         // error check
 
-    uint16_t highByte = Wire.read(); 
-    uint16_t lowByte = Wire.read(); 
+    uint16_t highByte = _i2c->read(); 
+    uint16_t lowByte = _i2c->read(); 
     
     return (highByte << 8) | lowByte; 
 }

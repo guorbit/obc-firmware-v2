@@ -42,7 +42,7 @@ void setup() {
     rtcInit();                   // initialize RTC
     heaterInit();                // initialize heater function
     adcsInit();                  // initialise ADCS
-    initEPS();                   // initialise EPS
+    epsInit();                   // initialise EPS
 
   pinMode(PB2, INPUT); // recovery mode pin
   if (digitalRead(PB2) == HIGH) {

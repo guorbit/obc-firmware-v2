@@ -19,7 +19,7 @@ class LTC4162 {
 
  public: LTC4162(); 
 
-    void begin(uint8_t addr = LTC4162_I2C_ADDRESS); 
+    void begin(TwoWire *theWire, uint8_t addr = LTC4162_I2C_ADDRESS); 
     float readBatteryVoltage(); 
     float readBatteryCurrent(); 
     float readInputVoltage(); 
@@ -28,7 +28,8 @@ class LTC4162 {
     uint16_t readSystemStatus(); 
     uint16_t readFaultStatus(); 
 
- private: 
+ private: 	
+    TwoWire *_i2c;
     uint8_t i2c_address_ltc; 
     uint16_t read16(uint8_t reg_addr); 
 }; 

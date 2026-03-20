@@ -11,7 +11,7 @@ LTC4162 bat_ltc;           // create LTC4162 instance for battery management
 //******************** EPS Initialization and Reading ******************//
 //*********************************************************************//
 
-void initEPS() {
+void epsInit() {
   // Initialize INA219 monitors
   static TwoWire i2c3(EPS_I2C_SDA_PIN, EPS_I2C_SCL_PIN);
   i2c3.setSDA(EPS_I2C_SDA_PIN);
@@ -27,7 +27,7 @@ void initEPS() {
   // Initialize LTC4162
   // TODO: I don't know why this Serial.begin was here... remove it if everythin works. 
   // Serial.begin(115200);
-  bat_ltc.begin(); // default address 0x67
+  bat_ltc.begin(&i2c3, BATTERY_LTC_ADDR);
 }
 
 const char *readEPS() {

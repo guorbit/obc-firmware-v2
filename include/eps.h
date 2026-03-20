@@ -16,7 +16,7 @@ extern INA219 fiveVolt_monitor;
 extern INA219 threeVolt3_monitor;
 extern LTC4162 bat_ltc;
 
-void initEPS();
+void epsInit();
 const char* readEPS();
 
 #endif // EPS_H
