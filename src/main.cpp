@@ -29,7 +29,7 @@ void setup() {
 
     // Debug mode
     #if OBC_DEBUG
-    Serial.begin(115200);        // initialize serial for debug output
+    Serial.begin(460800);        // initialize serial for debug output
     #endif
 
     // Initialise everything
