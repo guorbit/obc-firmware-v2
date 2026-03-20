@@ -2,6 +2,7 @@
 #include <flash.h> 
 #include <time.h>
 #include "recovery.h"
+#include "adcs.h" // for automatic time setting
 
 char receivedChar;
 bool newData = false; 
@@ -103,12 +104,50 @@ int timeSetManual() {                // manual time setting
 
 int timeSetAuto() {               // automatic time setting
   Serial.println("Retrieving time from GPS...");
-  const char* currentTime = rtcGetTime(); 
-  Serial.print("Current RTC Time: ");
-  Serial.print(currentTime);
+
+  // Create struct for time and initialise with defaults
+  struct {
+    int // all of type int
+    year = 2026, 
+    month = 3, 
+    day = 20, 
+    hour = 0, 
+    minute = 0, 
+    second = 0;
+  } gpsTime;
+
+  // Get gps time
+  char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
+  adcsInit();                  // initialise ADCS
+  adcsRead(dataFromADCS);
+
+  if (dataFromADCS[0] == 't') {
+    // Extract time from adcs message
+    sscanf(dataFromADCS, "t%02d%02d%02d", gpsTime.hour, gpsTime.minute, gpsTime.second);
+  } else {
+    // Print an error
+    Serial.printf("No valid time in message: %s\n", dataFromADCS);
+  }
+
+  char gpsTimeChar[32] = {};
+  snprintf(gpsTimeChar, sizeof(gpsTimeChar), "%04d%02d%02dT%02d%02d%02dZ", 
+          gpsTime.year, gpsTime.month, gpsTime.day, 
+          gpsTime.hour, gpsTime.minute, gpsTime.second);
+
+
+  const char* oldTime = rtcGetTime(); 
+  Serial.print("Old rtc time: ");
+  Serial.println(oldTime);
+
+  // Set rtc time
+  rtcSetTime(gpsTimeChar);
+
+  const char* newTime = rtcGetTime(); 
+  Serial.print("New rtc time: ");
+  Serial.println(oldTime);
 
   Serial.println("Time synchronized. Please confirm this time is accurate.");
-  Serial.println("Press y to confirm, n to reject.");
+  Serial.println("Press y to confirm, n to reject. ");
 
       while(!newData) {           // wait for new input
       recvOneChar();
@@ -214,8 +253,15 @@ void handleInput() {
 }
 
 void recovery() {                 // recovery mode
-  Serial.println("Entered recovery mode. \nPress any key to continue.");
   Serial.setTimeout(60000);   // set timeout to 60 seconds
+
+  while(!newData) {              // wait for new input 
+    recvOneChar();
+  }
+  newData = false;
+
+  Serial.println("Entered recovery mode. \nPress enter to continue.");
+  delay(1000);
 
   while(!newData) {              // wait for new input 
     recvOneChar();

@@ -8,60 +8,136 @@
 #include "watchdog.hpp"
 #include <Arduino.h>
 #include <Wire.h>
+#include "time.h"   // RTC support
+#include "heater.h" // heater function support
+#include "adcs.h"
+#include "save.h"
+#include "config.h"
 
-char mainBuffer[256] = {0}; // buffer to hold state data
+// Temp comms handling in main
+#include "LoRa_E32.h"
+#include <HardwareSerial.h>
+#define COMMS_BROADCAST_CHANNEL 0x04
+
+// Temp comms init
+HardwareSerial uart0(PA10, PA9);
+LoRa_E32 comms(&uart0, UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
+
+// Initialise variables
+char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
+char obcMessage[OBC_MESSAGE_LEN] = {};
+unsigned long lastPrint = 0;
 
 void setup() {
-  // Delay for 10 seconds to allow time for serial monitor connection
-  delay(10000);
-  // -------------------- Setup --------------------
-  pinMode(PD13, OUTPUT); // status LED
-  Serial.begin(115200);  // initialize serial for debug output
+    // -------------------- Setup --------------------
 
-  flashInit(); // initialize SPI flash
-  rtcInit();   // initialize RTC
-  initEPS();   // initialize EPS
+    // Debug mode
+    #if OBC_DEBUG
+    Serial.begin(460800);        // initialize serial for debug output
+    #endif
+
+    // Initialise everything
+    blinkInit();                 // Initialise blinker on status LED
+    flashInit();                 // initialize SPI flash
+    rtcInit();                   // initialize RTC
+    heaterInit();                // initialize heater function
+    adcsInit();                  // initialise ADCS
+    initEPS();                   // initialise EPS
 
   pinMode(PB2, INPUT); // recovery mode pin
   if (digitalRead(PB2) == HIGH) {
     recovery(); // enter recovery mode if pin is high
   }
 
-  // iwdg::init_watchdog();
+    // Comms CFG pin
+    pinMode(PC6, OUTPUT);
+    digitalWriteFast(PC_6, LOW);
+
+    comms.begin();
+
+    iwdg::init_watchdog();
 }
 
 void loop() {
-  mainBuffer[0] = '\0'; // clear buffer before use
-  iwdg::pet_watch_dog();
-
-  // -------------------- Main Loop --------------------
-  blink(PD_13);                      // blink status LED
-  Serial.printf("TMP: %i\n", tmp()); // print TMP value
-  iwdg::pet_watch_dog();
-
-  // Optional: print RTC time periodically
-  static unsigned long lastPrint = 0;
-  if (millis() - lastPrint >= 1000) {
-    Serial.printf("RTC Time: %s\n", rtcGetTime());
+    // -------------------- Main Loop --------------------
+    // Short delay to slow down loop
+    iwdg::pet_watch_dog();
+    delay(50);
     iwdg::pet_watch_dog();
 
-    snprintf(mainBuffer, sizeof(mainBuffer), "%s",
-             rtcGetTime()); // store RTC time in buffer
-    snprintf(mainBuffer + strlen(mainBuffer),
-             sizeof(mainBuffer) - strlen(mainBuffer), " | TMP: %i",
-             tmp()); // append TMP value to buffer
-    snprintf(mainBuffer + strlen(mainBuffer),
-             sizeof(mainBuffer) - strlen(mainBuffer), " | EPS: %s",
-             readEPS()); // append EPS readings to buffer
+    // Debug mode
+    #if OBC_DEBUG
+    // Print the temperature every loop
+    Serial.printf("TMP: %i\n", tmp());
+    #endif
+
+    // Blink the status LED to show that the loop is running correctly
+    blinkPoll();
+
     iwdg::pet_watch_dog();
 
-    saveState(mainBuffer, strlen(mainBuffer)); // save state to flash
-    Serial.printf("Saved state: %s\n", mainBuffer);
-    iwdg::pet_watch_dog();
+    // Every SLOW_LOOP_FREQ ms
+    if (millis() - lastPrint >= SLOW_LOOP_FREQ) {
+        // Clear OBC message
+        obcMessage[0] = '\0';
 
-    lastPrint = millis();
-  }
-  iwdg::pet_watch_dog();
-  delay(50);
-  iwdg::pet_watch_dog();
+        //Serial.printf("RTC Time: %s\n", rtcGetTime());
+
+
+        iwdg::pet_watch_dog();
+
+        // Collect ADCS data
+        adcsRead(dataFromADCS);
+
+
+        iwdg::pet_watch_dog();
+
+        // Begin buffer with opening square brace
+        snprintf(obcMessage, sizeof(obcMessage), "["); 
+
+        // Compile message
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "%s",
+            rtcGetTime()); // append time to buffer
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
+            tmp()); // append TMP value to buffer
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "|%s",
+            dataFromADCS); // append ADCS data to buffer
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "|%s",
+            readEPS()); // append EPS readings to buffer
+
+
+        // End buffer with closing square brace
+        snprintf(obcMessage + strlen(obcMessage),
+            sizeof(obcMessage) - strlen(obcMessage), "]");
+
+
+        // Save message
+        saveState(obcMessage, strlen(obcMessage));
+
+        // Send message
+        iwdg::pet_watch_dog();
+
+        //comms.sendMessage(dataFromADCS);
+        //comms.sendBroadcastFixedMessage(COMMS_BROADCAST_CHANNEL, dataFromADCS);
+
+
+        // [Debug mode] print message
+        #if OBC_DEBUG
+
+        Serial.println(obcMessage);
+
+
+        iwdg::pet_watch_dog();
+
+        #endif
+
+        iwdg::pet_watch_dog();
+        
+        // Reset lastPrint
+        lastPrint = millis();
+    }
 }
