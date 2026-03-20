@@ -144,9 +144,11 @@ void flashDumpRange(uint32_t addr, size_t len) {
         size_t toRead = min(chunkSize, len);
         flashRead(addr, buffer, toRead);
 
-        for (size_t i = 0; i < toRead; i++) {
-            Serial.write(buffer[i]);
-        }
+        // for (size_t i = 0; i < toRead; i++) {
+        //     Serial.write(buffer[i]);
+        // }
+
+        Serial.write(buffer, toRead);
 
         addr += toRead;
         len  -= toRead;

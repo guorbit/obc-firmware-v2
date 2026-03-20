@@ -6,7 +6,7 @@
 
 // Set the length of the output from the 
 //  ADCS board, in bytes.  
-#define READOUT_LENGTH_ADCS 141
+#define READOUT_LENGTH_ADCS 142
 
 // Set the I²C clock frequency
 #define ADCS_I2C_SPEED 100000
@@ -15,6 +15,7 @@
 #define ADCS_I2C_SDA PB7
 #define ADCS_I2C_SCL PB6
 
-int initADCS();
-int readADCS(char* adcsData);
+int adcsInit();
+int adcsRead(char* adcsData);
+
 #endif
