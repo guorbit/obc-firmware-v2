@@ -96,26 +96,35 @@ void loop() {
         snprintf(obcMessage, sizeof(obcMessage), "["); 
 
         // Compile message
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "%s",
             rtcGetTime()); // append time to buffer
+
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
             tmp()); // append TMP value to buffer
+        
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "|%s",
             dataFromADCS); // append ADCS data to buffer
+        
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "|%s",
             readEPS()); // append EPS readings to buffer
 
 
         // End buffer with closing square brace
+        iwdg::pet_watch_dog();
         snprintf(obcMessage + strlen(obcMessage),
             sizeof(obcMessage) - strlen(obcMessage), "]");
 
 
         // Save message
+        iwdg::pet_watch_dog();
         saveState(obcMessage, strlen(obcMessage));
 
         // Send message

@@ -25,18 +25,23 @@ void initEPS() {
   threeVolt3_monitor.calibrate();
 
   // Initialize LTC4162
-  Serial.begin(115200);
+  // TODO: I don't know why this Serial.begin was here... remove it if everythin works. 
+  // Serial.begin(115200);
   bat_ltc.begin(); // default address 0x67
 }
 
 const char *readEPS() {
   static char buffer[64];
 
-  snprintf(buffer, sizeof(buffer), "5V: %.2fV, %.2fW; 3.3V: %.2fV, %.2fW",
+  // Add PDM data to buffer
+  snprintf(buffer, sizeof(buffer), "%+0.2fV¦%+0.2fW¦%+0.2fV¦%+0.2fW",
            fiveVolt_monitor.busVoltage(),   // 5V bus voltage
            fiveVolt_monitor.busPower(),     // 5V bus power
            threeVolt3_monitor.busVoltage(), // 3.3V bus voltage
            threeVolt3_monitor.busPower());  // 3.3V bus voltage
+
+  // Add PCM data to buffer
+  // TODO: Not yet tested
 
   /*// read and print EPS values
   Serial.print("5V Bus Voltage: ");
