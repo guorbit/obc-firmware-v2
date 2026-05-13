@@ -118,7 +118,7 @@ int timeSetAuto() {               // automatic time setting
 
   // Get gps time
   char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
-  adcsInit();                  // initialise ADCS
+  initADCS();                  // initialise ADCS
   adcsRead(dataFromADCS);
 
   if (dataFromADCS[0] == 't') {

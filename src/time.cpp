@@ -40,7 +40,7 @@ void errorHandler()
 }
 
 // ---------------- RTC Initialisation Function ------------------
-extern "C" void rtcInit()
+extern "C" void initRTC()
 {
     // Enable Power Clock and Backup Access
     __HAL_RCC_PWR_CLK_ENABLE();

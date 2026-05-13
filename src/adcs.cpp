@@ -4,7 +4,7 @@
 
 TwoWire i2c1(ADCS_I2C_SDA, ADCS_I2C_SCL);
 
-int adcsInit() {
+int initADCS() {
     i2c1.setSDA(ADCS_I2C_SDA);
     i2c1.setSCL(ADCS_I2C_SCL);
     i2c1.begin(); //, ADCS_I2C_SPEED);

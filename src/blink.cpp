@@ -29,7 +29,7 @@ void blink(PinName led) {
 }
 
 // Wrapper for blink setup
-bool blinkInit() {
+bool initBlink() {
   pinMode(PD13, OUTPUT);       // status LED
   return EXIT_SUCCESS;
 }

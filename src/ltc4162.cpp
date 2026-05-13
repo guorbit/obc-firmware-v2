@@ -11,7 +11,7 @@ LTC4162::LTC4162() {
 void LTC4162::begin(TwoWire *theWire, uint8_t addr) {
     _i2c = theWire;
     i2c_address_ltc = addr;
-    //_i2c->begin();  // now done in epsInit
+    //_i2c->begin();  // now done in initEPS
 }
 
 uint16_t LTC4162::read16(uint8_t reg_addr) {

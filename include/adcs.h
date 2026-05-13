@@ -15,7 +15,7 @@
 #define ADCS_I2C_SDA PB7
 #define ADCS_I2C_SCL PB6
 
-int adcsInit();
+int initADCS();
 int adcsRead(char* adcsData);
 
 #endif

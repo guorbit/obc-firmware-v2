@@ -11,7 +11,7 @@ LTC4162 bat_ltc;           // create LTC4162 instance for battery management
 //******************** EPS Initialization and Reading ******************//
 //*********************************************************************//
 
-void epsInit() {
+void initEPS() {
   // Initialize INA219 monitors
   static TwoWire i2c3(EPS_I2C_SDA_PIN, EPS_I2C_SCL_PIN);
   i2c3.setSDA(EPS_I2C_SDA_PIN);

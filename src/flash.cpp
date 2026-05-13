@@ -16,7 +16,7 @@
 
 // -------------------- Initialization --------------------
 
-void flashInit() {
+void initFlash() {
     // Configure CS pin
     pinMode(FLASH_CS_PIN, OUTPUT);
     digitalWrite(FLASH_CS_PIN, HIGH);

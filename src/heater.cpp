@@ -2,7 +2,7 @@
 #include "heater.h"
 
 //INITIALISATION
-void heaterInit() {
+void initHeater() {
 
     // configure pin as output so we can force it to be high or low (off or on)
     pinMode(GPIO_HEATER, OUTPUT);
