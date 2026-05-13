@@ -5,5 +5,6 @@
 
 int sendComms(const char* state);
 int initComms();
+int getComms();
 
 #endif
