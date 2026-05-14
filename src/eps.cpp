@@ -41,7 +41,7 @@ const char *readEPS() {
            threeVolt3_monitor.busPower());  // 3.3V bus voltage
 
   // Add PCM data to buffer
-  snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), "¦%+0.2fV%+0.6fA%+0.2fVᵢ%04X%04X%04X",
+  snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), ";%+0.2fV%+0.6fA%+0.2fV%04X%04X%04X",
            bat_ltc.readBatteryVoltage(), 
            bat_ltc.readBatteryCurrent(),
            bat_ltc.readInputVoltage(), 

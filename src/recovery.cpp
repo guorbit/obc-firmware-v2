@@ -253,6 +253,8 @@ void handleInput() {
 }
 
 void recovery() {                 // recovery mode
+  Serial.begin(460800);              // initialize serial for recovery mode
+
   Serial.setTimeout(60000);   // set timeout to 60 seconds
 
   while(!newData) {              // wait for new input 
@@ -279,4 +281,15 @@ void recovery() {                 // recovery mode
     handleInput(); 
 
   }
+}
+
+int initRec() {              // initialise recovery mode
+  pinMode(PB2, INPUT); // recovery mode pin
+  return EXIT_SUCCESS;
+}
+
+int checkRec() {             // check if recovery mode should be entered
+  if (digitalReadFast(PB_2) == HIGH) {
+    recovery();
+  } 
 }

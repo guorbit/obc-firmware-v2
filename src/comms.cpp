@@ -96,6 +96,7 @@ int initComms() {
   } else {
     Serial.println(F("Comms begin success."));
   }
+  return EXIT_SUCCESS;
 }
 
 int getComms() {
@@ -132,4 +133,5 @@ int getComms() {
 
   digitalWriteFast(PC_6, LOW);
 
+  return EXIT_SUCCESS;
 }

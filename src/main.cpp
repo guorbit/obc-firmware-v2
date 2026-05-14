@@ -1,23 +1,22 @@
 // -------------------- Headers --------------------
 // General headers
+#include "blink.h"
+#include "config.h"
 #include <Arduino.h>
 #include <Wire.h>
-#include "config.h"
-#include "blink.h"
 // Subsystem headers
-#include "recovery.h"
-#include "watchdog.hpp"
-#include "tmp.h"
-#include "heater.h" // heater function support
 #include "adcs.h"
+#include "comms.h"
 #include "eps.h"
 #include "flash.h"  // SPI flash support
+#include "heater.h" // heater function support
+#include "burnwire.h"
+#include "recovery.h"
 #include "save.h"
-#include "comms.h"
 #include "time.h" // RTC support
-
-
-
+#include "tmp.h"
+#include "watchdog.hpp"
+#include "user.h"
 
 // Initialise variables
 char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
@@ -25,36 +24,35 @@ char obcMessage[OBC_MESSAGE_LEN] = {};
 unsigned long lastPrint = 0;
 
 void setup() {
-// -------------------- Setup --------------------
+  // -------------------- Setup --------------------
+  delay(8000); // Delay to allow time for connection.
 
-// Debug mode
-#if OBC_DEBUG
+  // Debug mode
+  #if OBC_DEBUG
   Serial.begin(460800); // initialize serial for debug output
-#endif
+  #endif
 
   // Initialise everything
-  initBlink();  // Initialise blinker on status LED
-  initFlash();  // initialize SPI flash
-  initRTC();    // initialize RTC
-  initHeater(); // initialize heater function
-  initADCS();   // initialise ADCS
-  initEPS();    // initialise EPS
-  initComms();  // initialise comms
+  initBlink();    // Initialise blinker on status LED
+  initFlash();    // initialize SPI flash
+  initRTC();      // initialize RTC
+  initHeater();   // initialize heater function
+  initBurnwire(); // initialize burnwire function
+  initADCS();     // initialise ADCS
+  initEPS();      // initialise EPS
+  initComms();    // initialise comms
+  initRec();      // initialise recovery mode
+  initUser();     // initialise user button
 
-  pinMode(PB2, INPUT); // recovery mode pin
-  if (digitalRead(PB2) == HIGH) {
-    recovery(); // enter recovery mode if pin is high
-  }
+  checkRec();     // check if recovery mode should be entered
 
-  pinMode(PA0, INPUT); // user button
 
-  pinMode(PE4, OUTPUT); // heater
-  pinMode(PE3, OUTPUT); // burnwire
+  pinMode(PE4, OUTPUT);        // heater
+  pinMode(PE3, OUTPUT);        // burnwire
   digitalWriteFast(PE_4, LOW); // turn heater off
   digitalWriteFast(PE_3, LOW); // turn burnwire off
 
-
-  //iwdg::init_watchdog();
+  // iwdg::init_watchdog();
 }
 
 void loop() {
