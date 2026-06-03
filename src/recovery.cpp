@@ -328,4 +328,5 @@ int checkRec() {             // check if recovery mode should be entered
   if (digitalReadFast(PB_2) == HIGH) {
     recovery();
   } 
+  return EXIT_SUCCESS;
 }

@@ -12,7 +12,7 @@
 //#include "heater.h" 
 //#include "burnwire.h"
 #include "recovery.h"
-//#include "time.h" 
+#include "time.h" 
 #include "tmp.h"
 //#include "watchdog.hpp"
 #include "user.h"
@@ -34,7 +34,7 @@ void setup() {
   // Initialise everything
   //initBlink();    // Initialise blinker on status LED
   initFlash();    // initialize SPI flash
-  //initRTC();      // initialize RTC
+  initRTC();      // initialize RTC
   //initHeater();   // initialize heater function
   //initBurnwire(); // initialize burnwire function
   initADCS();     // initialise ADCS
@@ -91,16 +91,14 @@ void loop() {
  
     // Compile message
     // iwdg::pet_watch_dog();
-    // snprintf(obcMessage + strlen(obcMessage),
-    //          sizeof(obcMessage) - strlen(obcMessage), "%s",
-    //          rtcGetTime()); // append time to buffer
+    snprintf(obcMessage + strlen(obcMessage),
+             sizeof(obcMessage) - strlen(obcMessage), "%s",
+             rtcGetTime()); // append time to buffer
 
     // iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
              tmp()); // append TMP value to buffer
-
-
 
     // Collect ADCS data
     adcsRead(dataFromADCS);
