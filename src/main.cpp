@@ -18,7 +18,7 @@
 //#include "user.h"
 
 // ------------- Initialize variables --------------
-//char dataFromADCS[READOUT_LENGTH_ADCS] = {};
+char dataFromADCS[READOUT_LENGTH_ADCS] = {};
 char obcMessage[OBC_MESSAGE_LEN] = {};
 unsigned long lastPrint = 0;
 
@@ -84,14 +84,11 @@ void loop() {
 
     // iwdg::pet_watch_dog();
 
-    // // Collect ADCS data
-    // //adcsRead(dataFromADCS);
-
     // iwdg::pet_watch_dog();
 
     // Begin buffer with opening square brace
     snprintf(obcMessage, sizeof(obcMessage), "[");
-
+ 
     // Compile message
     // iwdg::pet_watch_dog();
     // snprintf(obcMessage + strlen(obcMessage),
@@ -103,10 +100,14 @@ void loop() {
     //          sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
     //          tmp()); // append TMP value to buffer
 
+
+
+    // Collect ADCS data
+    adcsRead(dataFromADCS);
     // iwdg::pet_watch_dog();
-    // snprintf(obcMessage + strlen(obcMessage),
-    //          sizeof(obcMessage) - strlen(obcMessage), "|%s",
-    //          dataFromADCS); // append ADCS data to buffer
+    snprintf(obcMessage + strlen(obcMessage),
+             sizeof(obcMessage) - strlen(obcMessage), "|%s",
+             dataFromADCS); // append ADCS data to buffer
 
     // iwdg::pet_watch_dog();
     // snprintf(obcMessage + strlen(obcMessage),

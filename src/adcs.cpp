@@ -1,6 +1,7 @@
 #include "adcs.h"
 #include <Wire.h>
 #include <Arduino.h>
+#include <config.h>
 
 TwoWire i2c1(ADCS_I2C_SDA, ADCS_I2C_SCL);
 
