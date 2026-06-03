@@ -1,14 +1,5 @@
 #include "flash.h"
-
-// -------------------- Pin and Command Setup --------------------
-
-#define FLASH_CS_PIN PA4   // Chip Select pin
-#define CMD_READ_DATA        0x03
-#define CMD_PAGE_PROGRAM     0x02
-#define CMD_WRITE_ENABLE     0x06
-#define CMD_WRITE_DISABLE    0x04
-#define CMD_READ_STATUS      0x05
-#define CMD_SECTOR_ERASE_4K  0x20
+#include "config.h"
 
 // -------------------- Relevant Definitions --------------------
 

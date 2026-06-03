@@ -19,3 +19,26 @@
 #define ADCS_I2C_SDA PB_7
 #define ADCS_I2C_SCL PB_6
 
+
+// Flash
+#define FLASH_CS_PIN PA4   // Chip Select pin
+#define CMD_READ_DATA        0x03
+#define CMD_PAGE_PROGRAM     0x02
+#define CMD_WRITE_ENABLE     0x06
+#define CMD_WRITE_DISABLE    0x04
+#define CMD_READ_STATUS      0x05
+#define CMD_SECTOR_ERASE_4K  0x20
+
+
+// SaveState
+// 16 MB total size
+#define FLASH_SIZE_BYTES (16 * 1024 * 1024)
+
+// 4 KB reserved for metadata (tally bits)
+#define FLASH_METADATA_SIZE 0x1000
+
+// Block size of user data per tally bit (adjustable)
+#define FLASH_BLOCK_SIZE 512
+
+// First usable user data address (after metadata region)
+#define FLASH_USER_START FLASH_METADATA_SIZE

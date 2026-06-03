@@ -6,20 +6,6 @@
 #include "flash.h"
 #include <string>
 
-// -------------------- Flash Configuration --------------------
-
-// 16 MB total size
-#define FLASH_SIZE_BYTES (16 * 1024 * 1024)
-
-// 4 KB reserved for metadata (tally bits)
-#define FLASH_METADATA_SIZE 0x1000
-
-// Block size of user data per tally bit (adjustable)
-#define FLASH_BLOCK_SIZE 512
-
-// First usable user data address (after metadata region)
-#define FLASH_USER_START FLASH_METADATA_SIZE
-
 // -------------------- SaveState Functions --------------------
 
 /**
@@ -31,15 +17,6 @@
  * @return The flash address the data was written to, or 0 on failure.
  */
 uint32_t saveState(const char* data, size_t len);
-
-/**
- * @brief Saves a std::string to flash.
- * Converts the string into a char buffer before writing.
- * 
- * @param s  The std::string to save.
- * @return The flash address the data was written to, or 0 on failure.
- */
-uint32_t saveStateString(const std::string& s);
 
 // -------------------- Metadata Helpers --------------------
 

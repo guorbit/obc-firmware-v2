@@ -7,12 +7,12 @@
 #include "adcs.h"
 #include "comms.h"
 //#include "eps.h"
-//#include "flash.h"  // SPI flash support
-//#include "heater.h" // heater function support
+#include "flash.h"  
+#include "save.h"
+//#include "heater.h" 
 //#include "burnwire.h"
 //#include "recovery.h"
-//#include "save.h"
-//#include "time.h" // RTC support
+//#include "time.h" 
 #include "tmp.h"
 //#include "watchdog.hpp"
 //#include "user.h"
@@ -33,7 +33,7 @@ void setup() {
 
   // Initialise everything
   //initBlink();    // Initialise blinker on status LED
-  //initFlash();    // initialize SPI flash
+  initFlash();    // initialize SPI flash
   //initRTC();      // initialize RTC
   //initHeater();   // initialize heater function
   //initBurnwire(); // initialize burnwire function
@@ -121,7 +121,7 @@ void loop() {
 
     // Save message
     // iwdg::pet_watch_dog();
-    //saveState(obcMessage, strlen(obcMessage));
+    saveState(obcMessage, strlen(obcMessage));
 
 
 #if OBC_DEBUG
