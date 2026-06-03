@@ -3,4 +3,6 @@
 
 int initUser();
 
+bool checkUser();
+
 #endif

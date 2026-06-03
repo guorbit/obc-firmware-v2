@@ -11,11 +11,11 @@
 #include "save.h"
 //#include "heater.h" 
 //#include "burnwire.h"
-//#include "recovery.h"
+#include "recovery.h"
 //#include "time.h" 
 #include "tmp.h"
 //#include "watchdog.hpp"
-//#include "user.h"
+#include "user.h"
 
 // ------------- Initialize variables --------------
 char dataFromADCS[READOUT_LENGTH_ADCS] = {};
@@ -40,10 +40,10 @@ void setup() {
   initADCS();     // initialise ADCS
   //initEPS();      // initialise EPS
   initComms();    // initialise comms
-  //initRec();      // initialise recovery mode
-  //initUser();     // initialise user button
+  initRec();      // initialise recovery mode
+  initUser();     // initialise user button
 
-  //checkRec();     // check if recovery mode should be entered
+  checkRec();     // check if recovery mode should be entered
 
   //iwdg::init_watchdog();
 }

@@ -7,6 +7,8 @@
 // Total length of each OBC message, in bytes
 #define OBC_MESSAGE_LEN 512
 
+// User button
+#define GPIO_USER_BUTTON PA_0
 
 // Comms
 #define GPIO_COMMS_CFG PC_6
