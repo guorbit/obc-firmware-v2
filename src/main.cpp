@@ -13,7 +13,7 @@
 //#include "recovery.h"
 //#include "save.h"
 //#include "time.h" // RTC support
-//#include "tmp.h"
+#include "tmp.h"
 //#include "watchdog.hpp"
 //#include "user.h"
 
@@ -96,9 +96,9 @@ void loop() {
     //          rtcGetTime()); // append time to buffer
 
     // iwdg::pet_watch_dog();
-    // snprintf(obcMessage + strlen(obcMessage),
-    //          sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
-    //          tmp()); // append TMP value to buffer
+    snprintf(obcMessage + strlen(obcMessage),
+             sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
+             tmp()); // append TMP value to buffer
 
 
 
