@@ -30,7 +30,8 @@ void blink(PinName led) {
 
 // Wrapper for blink setup
 bool initBlink() {
-  pinMode(PD13, OUTPUT);       // status LED
+  pinMode(PD13, OUTPUT);          // status LED
+  digitalWriteFast(PD_13, HIGH);  // turn LED on during setup
   return EXIT_SUCCESS;
 }
 

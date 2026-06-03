@@ -7,32 +7,32 @@
 
 
 // Temp comms init
-HardwareSerial uart0(PA10, PA9);
+HardwareSerial uart0(PA_10, PA_9);
 LoRa_E32 comms(&uart0,
                UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
 
-int sendComms(const char* state){
+int sendComms(const char* message){
   // This function is intended to be called every main loop.
   // It maintains its own chunked-send state across calls so that
-  // only one 58-byte chunk is sent each second.
+  // one 58-byte chunk is sent each second.
   static char pendingMessage[OBC_MESSAGE_LEN] = {};
   static char lastSentMessage[OBC_MESSAGE_LEN] = {};
   static int messageOffset = -1;
   static unsigned long lastChunkSend = 0;
   static unsigned long lastCompleteSend = 0;
 
-  if (state != nullptr && state[0] != '\0') {
-    bool stateDiffersFromPending = (strcmp(state, pendingMessage) != 0);
-    bool stateDiffersFromLastSent = (strcmp(state, lastSentMessage) != 0);
+  if (message != nullptr && message[0] != '\0') {
+    bool messageDiffersFromPending = (strcmp(message, pendingMessage) != 0);
+    bool messageDiffersFromLastSent = (strcmp(message, lastSentMessage) != 0);
 
     if (messageOffset == -1) {
-      if (stateDiffersFromPending) {
-        strncpy(pendingMessage, state, sizeof(pendingMessage));
+      if (messageDiffersFromPending) {
+        strncpy(pendingMessage, message, sizeof(pendingMessage));
         pendingMessage[sizeof(pendingMessage) - 1] = '\0';
         messageOffset = 0;
-      } else if (!stateDiffersFromLastSent) {
+      } else if (!messageDiffersFromLastSent) {
         if (millis() - lastCompleteSend >= SLOW_LOOP_FREQ) {
-          strncpy(pendingMessage, state, sizeof(pendingMessage));
+          strncpy(pendingMessage, message, sizeof(pendingMessage));
           pendingMessage[sizeof(pendingMessage) - 1] = '\0';
           messageOffset = 0;
         }
@@ -63,13 +63,12 @@ int sendComms(const char* state){
 
   ResponseStatus status = comms.sendMessage(chunk);
   if (status.code != E32_SUCCESS) {
+#if OBC_DEBUG
     Serial.print(F("Comms send chunk failed: "));
     Serial.println(status.getResponseDescription());
-  } else {
-    Serial.print(F("Comms send chunk success ("));
-    Serial.print(chunkSize);
-    Serial.println(F(" bytes)."));
-  }
+#endif
+    return -1;
+  } 
 
   messageOffset += chunkSize;
   lastChunkSend = millis();
@@ -79,7 +78,6 @@ int sendComms(const char* state){
     strncpy(lastSentMessage, pendingMessage, sizeof(lastSentMessage));
     lastSentMessage[sizeof(lastSentMessage) - 1] = '\0';
     lastCompleteSend = millis();
-    Serial.println(F("Comms message fully sent."));
   }
 
   return 0;
@@ -87,20 +85,20 @@ int sendComms(const char* state){
 
 int initComms() {
   // Comms CFG pin
-  pinMode(PC6, OUTPUT);
-  digitalWriteFast(PC_6, LOW);
+  pinMode(GPIO_COMMS_CFG, OUTPUT);
+  digitalWriteFast(GPIO_COMMS_CFG, LOW);
   delay(100); // Wait for mode switch stabilization
 
-  if (!comms.begin()) {
-    Serial.println(F("Comms begin failed!"));
-  } else {
-    Serial.println(F("Comms begin success."));
+  bool status = comms.begin();
+
+  if (status != E32_SUCCESS) {
+    return EXIT_FAILURE;
   }
   return EXIT_SUCCESS;
 }
 
 int getComms() {
-  digitalWriteFast(PC_6, HIGH);
+  digitalWriteFast(GPIO_COMMS_CFG, HIGH);
   delay(100); // Wait for mode switch
   ResponseStructContainer commsConfig = comms.getConfiguration();
   if (commsConfig.status.code != E32_SUCCESS) {
@@ -131,7 +129,7 @@ int getComms() {
     commsConfig.close();
   }
 
-  digitalWriteFast(PC_6, LOW);
+  digitalWriteFast(GPIO_COMMS_CFG, LOW);
 
   return EXIT_SUCCESS;
 }
