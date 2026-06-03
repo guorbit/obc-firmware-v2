@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <flash.h> 
 #include <time.h>
+#include "config.h"
 #include "recovery.h"
 #include "adcs.h" // for automatic time setting
 
