@@ -6,10 +6,10 @@
 //#include "blink.h"
 #include "adcs.h"
 #include "comms.h"
-//#include "eps.h"
+#include "eps.h"
 #include "flash.h"  
 #include "save.h"
-//#include "heater.h" 
+#include "heater.h" 
 //#include "burnwire.h"
 #include "recovery.h"
 #include "time.h" 
@@ -18,7 +18,7 @@
 #include "user.h"
 
 // ------------- Initialize variables --------------
-char dataFromADCS[READOUT_LENGTH_ADCS] = {};
+char dataFromADCS[READOUT_LENGTH_ADCS] = {"No data from ADCS"};
 char obcMessage[OBC_MESSAGE_LEN] = {};
 unsigned long lastPrint = 0;
 
@@ -35,10 +35,10 @@ void setup() {
   //initBlink();    // Initialise blinker on status LED
   initFlash();    // initialize SPI flash
   initRTC();      // initialize RTC
-  //initHeater();   // initialize heater function
+  initHeater();   // initialize heater function
   //initBurnwire(); // initialize burnwire function
   initADCS();     // initialise ADCS
-  //initEPS();      // initialise EPS
+  initEPS();      // initialise EPS
   initComms();    // initialise comms
   initRec();      // initialise recovery mode
   initUser();     // initialise user button
@@ -56,15 +56,15 @@ void loop() {
   // iwdg::pet_watch_dog();
 
   // User button to set heater and burnwire for testing
-  // if (digitalReadFast(PA_0) == HIGH) {
-  //   // If pressed, set both to HIGH
-  //   digitalWriteFast(PE_4, HIGH);
-  //   digitalWriteFast(PE_3, HIGH);
-  // } else {
-  //   // Else ensure they are LOW
-  //   digitalWriteFast(PE_4, LOW);
-  //   digitalWriteFast(PE_3, LOW);
-  // }
+  if (digitalReadFast(PA_0) == HIGH) {
+    // If pressed, set both to HIGH
+    digitalWriteFast(PE_4, HIGH);
+    digitalWriteFast(PE_3, HIGH);
+  } else {
+    // Else ensure they are LOW
+    digitalWriteFast(PE_4, LOW);
+    digitalWriteFast(PE_3, LOW);
+  }
 
 // Debug mode
 #if OBC_DEBUG
@@ -108,9 +108,14 @@ void loop() {
              dataFromADCS); // append ADCS data to buffer
 
     // iwdg::pet_watch_dog();
-    // snprintf(obcMessage + strlen(obcMessage),
-    //          sizeof(obcMessage) - strlen(obcMessage), "|%s",
-    //          readEPS()); // append EPS readings to buffer
+    snprintf(obcMessage + strlen(obcMessage),
+             sizeof(obcMessage) - strlen(obcMessage), "|%s",
+             readEPS()); // append EPS readings to buffer
+
+    // Add heater status
+    snprintf(obcMessage + strlen(obcMessage), 
+             sizeof(obcMessage) - strlen(obcMessage), "|%d", 
+             getHeater());
 
     // End buffer with closing square brace
     // iwdg::pet_watch_dog();

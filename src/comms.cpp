@@ -44,7 +44,7 @@ int sendComms(const char* message){
     return 0;
   }
 
-  if (millis() - lastChunkSend < 1000) {
+  if (millis() - lastChunkSend < COMMS_CHUNK_INTERVAL_MILLIS) {
     return 0;
   }
 

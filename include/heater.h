@@ -5,5 +5,6 @@
 
 int setHeater(bool state); // declaring heater function
 void initHeater(); // declaring initialisation
+bool getHeater();
 
 #endif

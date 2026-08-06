@@ -16,3 +16,9 @@ int setHeater(bool state) { // giving function input value of 'state', a boolean
     digitalWriteFast(GPIO_HEATER, state); // this lines sets the state of the heater to on or off
     return state;
 }
+
+//GETHEATER FUNCTION
+bool getHeater() {
+    bool state = digitalReadFast(GPIO_HEATER);
+    return state;
+}

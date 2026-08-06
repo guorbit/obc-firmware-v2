@@ -12,6 +12,7 @@
 
 // Comms
 #define GPIO_COMMS_CFG PC_6
+#define COMMS_CHUNK_INTERVAL_MILLIS 3000
 
 
 // ADCS
