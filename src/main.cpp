@@ -120,7 +120,7 @@ void loop() {
     // End buffer with closing square brace
     // iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
-             sizeof(obcMessage) - strlen(obcMessage), "]");
+             sizeof(obcMessage) - strlen(obcMessage), "]\n");
 
     // Save message
     // iwdg::pet_watch_dog();

@@ -61,6 +61,10 @@ int sendComms(const char* message){
   strncpy(chunk, pendingMessage + messageOffset, chunkSize);
   chunk[chunkSize] = '\0';
 
+#if OBC_DEBUG_AS_COMMS
+  Serial.print(chunk);
+#endif
+
   ResponseStatus status = comms.sendMessage(chunk);
   if (status.code != E32_SUCCESS) {
 #if OBC_DEBUG

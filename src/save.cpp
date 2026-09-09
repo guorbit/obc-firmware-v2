@@ -113,10 +113,12 @@ uint32_t saveState(const char* data, size_t len) {
 
     flashAdvanceNextFreeAddr(addr, len);
 
+    #if OBC_DEBUG
     Serial.print("saveState: wrote ");
     Serial.print(len);
     Serial.print(" bytes at address 0x");
     Serial.println(addr, HEX);
+    #endif
 
     return addr;
 }
