@@ -56,7 +56,7 @@ void setup() {
 void loop() {
   // Short delay to slow down loop
   iwdg::pet_watch_dog();
-  delay(50);
+  //delay(50);
   iwdg::pet_watch_dog();
 
   // User button to set heater and burnwire for testing
