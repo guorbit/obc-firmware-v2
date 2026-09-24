@@ -14,7 +14,7 @@
 #include "recovery.h"
 #include "time.h" 
 #include "tmp.h"
-//#include "watchdog.hpp"
+#include "watchdog.hpp"
 #include "user.h"
 
 // ------------- Initialize variables --------------
@@ -46,18 +46,18 @@ void setup() {
   checkRec();     // check if recovery mode should be entered
 
   //getComms();  
-  // setComms();     // configure minimum power and broadcast addressing
+  setComms();     // configure minimum power and broadcast addressing
 
 
-  //iwdg::init_watchdog();
+  iwdg::init_watchdog();
 }
 
 // -------------------- Main Loop --------------------
 void loop() {
   // Short delay to slow down loop
-  //iwdg::pet_watch_dog();
-  //delay(50);
-  //iwdg::pet_watch_dog();
+  iwdg::pet_watch_dog();
+  delay(50);
+  iwdg::pet_watch_dog();
 
   // User button to set heater and burnwire for testing
   // if (digitalReadFast(PA_0) == HIGH) {
@@ -81,39 +81,39 @@ void loop() {
   // Blink the status LED
   //blinkPoll();
 
-  //iwdg::pet_watch_dog();
+  iwdg::pet_watch_dog();
 
   // Every SLOW_LOOP_FREQ ms (Message Compilation)
   if (millis() - lastPrint >= SLOW_LOOP_FREQ) {
     // Clear OBC message
     obcMessage[0] = '\0';
 
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
 
-    // iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
 
     // Begin buffer with opening square brace
     snprintf(obcMessage, sizeof(obcMessage), "[");
  
     // Compile message
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "%s",
              rtcGetTime()); // append time to buffer
 
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
              tmp()); // append TMP value to buffer
 
     // Collect ADCS data
     adcsRead(dataFromADCS);
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%s",
              dataFromADCS); // append ADCS data to buffer
 
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%s",
              readEPS()); // append EPS readings to buffer
@@ -124,12 +124,12 @@ void loop() {
              getHeater());
 
     // End buffer with closing square brace
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "]\n");
 
     // Save message
-    //iwdg::pet_watch_dog();
+    iwdg::pet_watch_dog();
     saveState(obcMessage, strlen(obcMessage));
 
 
@@ -141,14 +141,24 @@ void loop() {
     lastPrint = millis();
   }
 
-  //iwdg::pet_watch_dog();
+  iwdg::pet_watch_dog();
 
-  // sendComms is polled every loop
-  sendComms(obcMessage);
 
-  if (tmp() <= 10) {
-    setHeater(1);
-  } else {
-    setHeater(0);
+  // TEMPERATURE DEPENDENT ACTIONS
+  const int boardTemperature = tmp();
+  const float batteryTemperature = bat_ltc.readThermistorProduct();
+
+  // Poll sendComms unless a measured temperature indicates overheating
+  if (boardTemperature <= 65 &&
+      (!isfinite(batteryTemperature) || batteryTemperature <= 65.0f)) {
+    sendComms(obcMessage);
   }
+
+  // Turn on heater if OBC is below 10°C and battery is not above 45°C
+  if (boardTemperature <= 10 && 
+      (!isfinite(batteryTemperature) || batteryTemperature < 45.0f)) {
+    setHeater(1);
+  } else if (boardTemperature >= 15 || batteryTemperature >= 65.0f) {
+    setHeater(0);
+  } 
 }

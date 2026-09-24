@@ -105,24 +105,24 @@ float LTC4162::readThermistorProduct() {
 
   const uint16_t thermistorRaw = readThermistor();
   if (thermistorRaw == 0xFFFF || thermistorRaw == 0) {
-    return 0.0f;
+    return NAN;
   }
 
   const float countRatio = (float)thermistorRaw / maxCount;
   if (countRatio <= 0.0f || countRatio >= 1.0f) {
-    return 0.0f;
+    return NAN;
   }
 
   const float Vout = Vin * countRatio;
   const float Rout = (Rt * Vout) / (Vin - Vout);
   if (Rout <= 0.0f) {
-    return 0.0f;
+    return NAN;
   }
 
   const float TempK = (beta / log(Rout / Rinf));
   const float TempC = TempK - 273.15f;
 
-  return isfinite(TempC) ? TempC : 0.0f;
+  return isfinite(TempC) ? TempC : NAN;
 }
 
 uint16_t LTC4162::readFaultStatus() {

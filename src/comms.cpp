@@ -11,6 +11,11 @@ HardwareSerial uart0(PA_10, PA_9);
 LoRa_E32 comms(&uart0,
                UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
 
+static void indicateCommsFailure() {
+  pinMode(PD_13, OUTPUT);
+  digitalWriteFast(PD_13, HIGH);
+}
+
 int sendComms(const char* message){
   // This function is intended to be called every main loop.
   // It maintains its own chunked-send state across calls so that
@@ -108,21 +113,78 @@ int setComms() {
   ResponseStructContainer commsConfig = comms.getConfiguration();
   if (commsConfig.status.code != E32_SUCCESS) {
     digitalWriteFast(GPIO_COMMS_CFG, LOW);
+    indicateCommsFailure();
     return EXIT_FAILURE;
   }
 
   Configuration *configuration = (Configuration *)commsConfig.data;
-  configuration->ADDH = 0x00;//BROADCAST_ADDRESS;
-  configuration->ADDL = 0x00;//BROADCAST_ADDRESS;
-  configuration->CHAN = 0x17;
-  configuration->OPTION.transmissionPower = POWER_10;
+  configuration->ADDH = 0x00;
+  configuration->ADDL = 0x00;
+  configuration->SPED.airDataRate = AIR_DATA_RATE_010_24;
+  configuration->SPED.uartBaudRate = UART_BPS_9600;
+  configuration->SPED.uartParity = MODE_00_8N1;
+  configuration->CHAN = 0x04;
+  configuration->OPTION.fixedTransmission = FT_TRANSPARENT_TRANSMISSION;
+  configuration->OPTION.ioDriveMode = IO_D_MODE_PUSH_PULLS_PULL_UPS;
+  configuration->OPTION.wirelessWakeupTime = WAKE_UP_250;
+  configuration->OPTION.fec = FEC_0_OFF;
+  configuration->OPTION.transmissionPower = 0b11;
 
   ResponseStatus status = comms.setConfiguration(*configuration,
                                                   WRITE_CFG_PWR_DWN_SAVE);
+  bool confirmed = status.code == E32_SUCCESS;
+  const byte expected[] = {0xC0, 0x00, 0x00, 0x1A, 0x04, 0x43};
+
+  if (confirmed) {
+    delay(100);
+    ResponseStructContainer readback = comms.getConfiguration();
+    confirmed = readback.status.code == E32_SUCCESS;
+    if (confirmed) {
+      const byte *raw = (const byte *)readback.data;
+      for (size_t index = 0; index < sizeof(expected); ++index) {
+        if (raw[index] != expected[index]) {
+          confirmed = false;
+          break;
+        }
+      }
+
+#if OBC_DEBUG
+      Serial.println(F("E32 SETTINGS WRITTEN"));
+      Serial.println(F("Address       0x0000 (0)"));
+      Serial.println(F("UART          9600 baud, 8N1"));
+      Serial.println(F("Air rate      2.4 kbps"));
+      Serial.println(F("Channel       4  (414 MHz (E32-xxx default band))"));
+      Serial.println(F("Transmission  Transparent"));
+      Serial.println(F("IO drive      Push-pull"));
+      Serial.println(F("Wake-up       0 x 250 ms"));
+      Serial.println(F("FEC           Disabled"));
+      Serial.println(F("TX power      24 dBm (0.250 W)"));
+      Serial.print(F("Raw frame     "));
+      for (size_t index = 0; index < sizeof(expected); ++index) {
+        if (index > 0) {
+          Serial.print(F(" "));
+        }
+        if (raw[index] < 0x10) {
+          Serial.print(F("0"));
+        }
+        Serial.print(raw[index], HEX);
+      }
+      Serial.println();
+      Serial.println(confirmed ? F("E32 SETTINGS CONFIRMED")
+                               : F("E32 SETTINGS MISMATCH"));
+#endif
+      readback.close();
+    }
+  }
+
   commsConfig.close();
   digitalWriteFast(GPIO_COMMS_CFG, LOW);
 
-  return status.code == E32_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+  if (!confirmed) {
+    indicateCommsFailure();
+  }
+
+  return confirmed ? EXIT_SUCCESS : EXIT_FAILURE;
 }
 
 int getComms() {

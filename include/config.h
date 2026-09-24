@@ -1,5 +1,5 @@
 // Debug mode
-#define OBC_DEBUG true
+#define OBC_DEBUG false
 #define OBC_DEBUG_AS_COMMS false
 
 // Slow loop frequency
