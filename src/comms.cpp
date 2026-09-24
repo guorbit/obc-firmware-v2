@@ -101,6 +101,29 @@ int initComms() {
   return EXIT_SUCCESS;
 }
 
+int setComms() {
+  digitalWriteFast(GPIO_COMMS_CFG, HIGH);
+  delay(1000); // Wait for mode switch
+
+  ResponseStructContainer commsConfig = comms.getConfiguration();
+  if (commsConfig.status.code != E32_SUCCESS) {
+    digitalWriteFast(GPIO_COMMS_CFG, LOW);
+    return EXIT_FAILURE;
+  }
+
+  Configuration *configuration = (Configuration *)commsConfig.data;
+  configuration->ADDH = BROADCAST_ADDRESS;
+  configuration->ADDL = BROADCAST_ADDRESS;
+  configuration->OPTION.transmissionPower = POWER_10;
+
+  ResponseStatus status = comms.setConfiguration(*configuration,
+                                                  WRITE_CFG_PWR_DWN_SAVE);
+  commsConfig.close();
+  digitalWriteFast(GPIO_COMMS_CFG, LOW);
+
+  return status.code == E32_SUCCESS ? EXIT_SUCCESS : EXIT_FAILURE;
+}
+
 int getComms() {
   digitalWriteFast(GPIO_COMMS_CFG, HIGH);
   delay(1000); // Wait for mode switch

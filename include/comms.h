@@ -3,6 +3,7 @@
 
 int sendComms(const char* message);
 int initComms();
+int setComms();
 int getComms();
 
 #endif

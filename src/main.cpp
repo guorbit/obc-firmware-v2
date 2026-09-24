@@ -40,6 +40,7 @@ void setup() {
   initADCS();     // initialise ADCS
   initEPS();      // initialise EPS
   initComms();    // initialise comms
+  setComms();     // configure minimum power and broadcast addressing
   initRec();      // initialise recovery mode
   initUser();     // initialise user button
 
@@ -76,7 +77,7 @@ void loop() {
 
 
 
-  // Blink the status LED to show that the loop is running correctly
+  // Blink the status LED
   //blinkPoll();
 
   //iwdg::pet_watch_dog();
