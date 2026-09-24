@@ -51,9 +51,9 @@ void setup() {
 // -------------------- Main Loop --------------------
 void loop() {
   // Short delay to slow down loop
-  // iwdg::pet_watch_dog();
-  // delay(50);
-  // iwdg::pet_watch_dog();
+  iwdg::pet_watch_dog();
+  delay(50);
+  iwdg::pet_watch_dog();
 
   // User button to set heater and burnwire for testing
   // if (digitalReadFast(PA_0) == HIGH) {

@@ -14,7 +14,7 @@ namespace iwdg
     // Timing config: choose a pair that really yields ~0.1 s
     constexpr uint32_t LSI_HZ = 32000U; // typical; measure on your board if you need precision
 
-    constexpr uint32_t prescaler = IWDG_PRESCALER_64; // previously IWDG_PRESCALER_32 but bit too often
+    constexpr uint32_t prescaler = IWDG_PRESCALER_256; // previously IWDG_PRESCALER_32 but bit too often
     constexpr uint32_t reload_value = 9999U;            // (99 + 1) * 32 / 32000 = 100 ms
 
     // Handle and local state
