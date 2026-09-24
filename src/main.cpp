@@ -14,7 +14,7 @@
 #include "recovery.h"
 #include "time.h" 
 #include "tmp.h"
-#include "watchdog.hpp"
+//#include "watchdog.hpp"
 #include "user.h"
 
 // ------------- Initialize variables --------------
@@ -28,7 +28,7 @@ void setup() {
 
   // Debug mode
 #if OBC_DEBUG
-  Serial.begin(460800); // initialize serial for debug output
+  Serial.begin(115200); // initialize serial for debug output
 #endif
 
   // Initialise everything
@@ -45,15 +45,17 @@ void setup() {
 
   checkRec();     // check if recovery mode should be entered
 
-  iwdg::init_watchdog();
+  //getComms();
+
+  //iwdg::init_watchdog();
 }
 
 // -------------------- Main Loop --------------------
 void loop() {
   // Short delay to slow down loop
-  iwdg::pet_watch_dog();
-  delay(50);
-  iwdg::pet_watch_dog();
+  //iwdg::pet_watch_dog();
+  //delay(50);
+  //iwdg::pet_watch_dog();
 
   // User button to set heater and burnwire for testing
   // if (digitalReadFast(PA_0) == HIGH) {
@@ -69,7 +71,7 @@ void loop() {
 // Debug mode
 #if OBC_DEBUG
   // Print the temperature every loop
-  Serial.printf("TMP: %i\n", tmp());
+  //Serial.printf("TMP: %i\n", tmp());
 #endif
 
 
@@ -77,14 +79,14 @@ void loop() {
   // Blink the status LED to show that the loop is running correctly
   //blinkPoll();
 
-  iwdg::pet_watch_dog();
+  //iwdg::pet_watch_dog();
 
   // Every SLOW_LOOP_FREQ ms (Message Compilation)
   if (millis() - lastPrint >= SLOW_LOOP_FREQ) {
     // Clear OBC message
     obcMessage[0] = '\0';
 
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
 
     // iwdg::pet_watch_dog();
 
@@ -92,24 +94,24 @@ void loop() {
     snprintf(obcMessage, sizeof(obcMessage), "[");
  
     // Compile message
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "%s",
              rtcGetTime()); // append time to buffer
 
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%+02i",
              tmp()); // append TMP value to buffer
 
     // Collect ADCS data
     adcsRead(dataFromADCS);
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%s",
              dataFromADCS); // append ADCS data to buffer
 
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "|%s",
              readEPS()); // append EPS readings to buffer
@@ -120,12 +122,12 @@ void loop() {
              getHeater());
 
     // End buffer with closing square brace
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     snprintf(obcMessage + strlen(obcMessage),
              sizeof(obcMessage) - strlen(obcMessage), "]\n");
 
     // Save message
-    iwdg::pet_watch_dog();
+    //iwdg::pet_watch_dog();
     saveState(obcMessage, strlen(obcMessage));
 
 
@@ -137,7 +139,7 @@ void loop() {
     lastPrint = millis();
   }
 
-  iwdg::pet_watch_dog();
+  //iwdg::pet_watch_dog();
 
   // sendComms is polled every loop
   sendComms(obcMessage);

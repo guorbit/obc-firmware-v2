@@ -1,9 +1,9 @@
 // Debug mode
-#define OBC_DEBUG false
-#define OBC_DEBUG_AS_COMMS true
+#define OBC_DEBUG true
+#define OBC_DEBUG_AS_COMMS false
 
 // Slow loop frequency
-#define SLOW_LOOP_FREQ 10000 // e.g. 10000 = 10 sec
+#define SLOW_LOOP_FREQ 15000 // e.g. 10000 = 10 sec
 
 // Total length of each OBC message, in bytes
 #define OBC_MESSAGE_LEN 512
@@ -18,7 +18,7 @@
 
 // ADCS
 #define ADCS_I2C_ADDRESS 0x08
-#define READOUT_LENGTH_ADCS 142
+#define READOUT_LENGTH_ADCS 148
 #define ADCS_I2C_SPEED 100000
 #define ADCS_I2C_SDA PB_7
 #define ADCS_I2C_SCL PB_6

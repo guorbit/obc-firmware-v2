@@ -103,7 +103,7 @@ int initComms() {
 
 int getComms() {
   digitalWriteFast(GPIO_COMMS_CFG, HIGH);
-  delay(100); // Wait for mode switch
+  delay(1000); // Wait for mode switch
   ResponseStructContainer commsConfig = comms.getConfiguration();
   if (commsConfig.status.code != E32_SUCCESS) {
     Serial.println(commsConfig.status.getResponseDescription());
