@@ -40,13 +40,14 @@ void setup() {
   initADCS();     // initialise ADCS
   initEPS();      // initialise EPS
   initComms();    // initialise comms
-  setComms();     // configure minimum power and broadcast addressing
   initRec();      // initialise recovery mode
   initUser();     // initialise user button
 
   checkRec();     // check if recovery mode should be entered
 
-  //getComms();
+  //getComms();  
+  // setComms();     // configure minimum power and broadcast addressing
+
 
   //iwdg::init_watchdog();
 }

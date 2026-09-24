@@ -112,8 +112,9 @@ int setComms() {
   }
 
   Configuration *configuration = (Configuration *)commsConfig.data;
-  configuration->ADDH = BROADCAST_ADDRESS;
-  configuration->ADDL = BROADCAST_ADDRESS;
+  configuration->ADDH = 0x00;//BROADCAST_ADDRESS;
+  configuration->ADDL = 0x00;//BROADCAST_ADDRESS;
+  configuration->CHAN = 0x17;
   configuration->OPTION.transmissionPower = POWER_10;
 
   ResponseStatus status = comms.setConfiguration(*configuration,
