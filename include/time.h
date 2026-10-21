@@ -14,7 +14,7 @@ void rtcSetTime(char* isotime);
 const char* rtcGetTime(void);
 
 // Function to initialize the RTC peripheral
-void rtcInit(void);
+void initRTC(void);
 
 #ifdef __cplusplus
 }

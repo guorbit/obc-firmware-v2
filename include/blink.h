@@ -6,7 +6,7 @@
 void blink(PinName led);
 
 // Wrapper for blink setup
-bool blinkInit();
+bool initBlink();
 
 // Wrapper for blink polling
 bool blinkPoll();

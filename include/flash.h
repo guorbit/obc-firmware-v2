@@ -7,7 +7,7 @@
 // -------------------- SPI Flash Functions --------------------
 
 // Initialize SPI and ensure metadata region is ready
-void flashInit();
+void initFlash();
 
 // Read 'len' bytes from 'addr' into buffer
 void flashRead(uint32_t addr, uint8_t* buffer, size_t len);

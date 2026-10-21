@@ -1,8 +1,9 @@
 #ifndef COMMS_H
 #define COMMS_H
 
-#include <string>
-
-int sendComms(std::string state);
+int sendComms(const char* message);
+int initComms();
+int setComms();
+int getComms();
 
 #endif
