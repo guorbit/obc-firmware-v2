@@ -3,5 +3,5 @@
 
 void credits() {
     Serial.println("Contributors:"); // list of contributors - our credits roll
-    Serial.println("- Saliha Afridi");
+    Serial.println(creditsList);
 }
