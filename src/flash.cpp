@@ -1,14 +1,5 @@
 #include "flash.h"
-
-// -------------------- Pin and Command Setup --------------------
-
-#define FLASH_CS_PIN PA4   // Chip Select pin
-#define CMD_READ_DATA        0x03
-#define CMD_PAGE_PROGRAM     0x02
-#define CMD_WRITE_ENABLE     0x06
-#define CMD_WRITE_DISABLE    0x04
-#define CMD_READ_STATUS      0x05
-#define CMD_SECTOR_ERASE_4K  0x20
+#include "config.h"
 
 // -------------------- Relevant Definitions --------------------
 
@@ -16,7 +7,7 @@
 
 // -------------------- Initialization --------------------
 
-void flashInit() {
+void initFlash() {
     // Configure CS pin
     pinMode(FLASH_CS_PIN, OUTPUT);
     digitalWrite(FLASH_CS_PIN, HIGH);
@@ -144,9 +135,11 @@ void flashDumpRange(uint32_t addr, size_t len) {
         size_t toRead = min(chunkSize, len);
         flashRead(addr, buffer, toRead);
 
-        for (size_t i = 0; i < toRead; i++) {
-            Serial.write(buffer[i]);
-        }
+        // for (size_t i = 0; i < toRead; i++) {
+        //     Serial.write(buffer[i]);
+        // }
+
+        Serial.write(buffer, toRead);
 
         addr += toRead;
         len  -= toRead;

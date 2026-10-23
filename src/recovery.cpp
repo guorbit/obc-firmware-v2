@@ -1,7 +1,10 @@
 #include <Arduino.h>
 #include <flash.h> 
 #include <time.h>
+#include "config.h"
 #include "recovery.h"
+#include "adcs.h" // for automatic time setting
+#include "user.h"
 
 char receivedChar;
 bool newData = false; 
@@ -103,12 +106,50 @@ int timeSetManual() {                // manual time setting
 
 int timeSetAuto() {               // automatic time setting
   Serial.println("Retrieving time from GPS...");
-  const char* currentTime = rtcGetTime(); 
-  Serial.print("Current RTC Time: ");
-  Serial.print(currentTime);
+
+  // Create struct for time and initialise with defaults
+  struct {
+    int // all of type int
+    year = 2026, 
+    month = 3, 
+    day = 20, 
+    hour = 0, 
+    minute = 0, 
+    second = 0;
+  } gpsTime;
+
+  // Get gps time
+  char dataFromADCS[READOUT_LENGTH_ADCS] = "ADCS data not gathered\0";
+  initADCS();                  // initialise ADCS
+  adcsRead(dataFromADCS);
+
+  if (dataFromADCS[0] == 't') {
+    // Extract time from adcs message
+    sscanf(dataFromADCS, "t%02d%02d%02d", gpsTime.hour, gpsTime.minute, gpsTime.second);
+  } else {
+    // Print an error
+    Serial.printf("No valid time in message: %s\n", dataFromADCS);
+  }
+
+  char gpsTimeChar[32] = {};
+  snprintf(gpsTimeChar, sizeof(gpsTimeChar), "%04d%02d%02dT%02d%02d%02dZ", 
+          gpsTime.year, gpsTime.month, gpsTime.day, 
+          gpsTime.hour, gpsTime.minute, gpsTime.second);
+
+
+  const char* oldTime = rtcGetTime(); 
+  Serial.print("Old rtc time: ");
+  Serial.println(oldTime);
+
+  // Set rtc time
+  rtcSetTime(gpsTimeChar);
+
+  const char* newTime = rtcGetTime(); 
+  Serial.print("New rtc time: ");
+  Serial.println(oldTime);
 
   Serial.println("Time synchronized. Please confirm this time is accurate.");
-  Serial.println("Press y to confirm, n to reject.");
+  Serial.println("Press y to confirm, n to reject. ");
 
       while(!newData) {           // wait for new input
       recvOneChar();
@@ -189,6 +230,33 @@ int flashDumpMode() {               // dump entire flash
   return status;
 }
 
+int flashEraseMode() {
+  Serial.println("Press y to erase entire flash, any other key to exit.");
+  Serial.println("You can only erase the flash if you unclick the recovery mode button.");
+
+  while(!newData) {                 // wait for new input
+    recvOneChar();
+  }
+
+  switch(receivedChar){
+    case 'y':
+    case 'Y':
+      if (checkUser()) {
+        break;
+      }
+      Serial.println("Erasing entire flash...");
+      flashEraseAll();
+      status = EXIT_SUCCESS;
+      break;
+
+    default:
+      Serial.println("Exiting...");
+      status = EXIT_FAILURE;
+      break;
+  }
+  return status;
+}
+
 void handleInput() {
   if (newData) {
     newData = false;
@@ -206,6 +274,13 @@ void handleInput() {
       Serial.println(status);
       break;
 
+    case 'e':
+    case 'E': 
+      status = flashEraseMode();
+      Serial.println(status);
+      break;
+
+
     default:
       Serial.println("Invalid choice.");
       break;
@@ -214,6 +289,8 @@ void handleInput() {
 }
 
 void recovery() {                 // recovery mode
+  Serial.begin(460800);              // initialize serial for recovery mode
+
   Serial.setTimeout(60000);   // set timeout to 60 seconds
 
   while(!newData) {              // wait for new input 
@@ -230,7 +307,7 @@ void recovery() {                 // recovery mode
   newData = false;
 
   while (true) {                // main recovery loop  
-    Serial.println("Press 't' to set the time, or 'f' to read the flash.");
+    Serial.println("Press 't' to set the time, 'f' to read the flash, or 'e' to erase the flash.");
     newData = false;
 
     while(!newData) { 
@@ -240,4 +317,16 @@ void recovery() {                 // recovery mode
     handleInput(); 
 
   }
+}
+
+int initRec() {              // initialise recovery mode
+  pinMode(PB2, INPUT); // recovery mode pin
+  return EXIT_SUCCESS;
+}
+
+int checkRec() {             // check if recovery mode should be entered
+  if (digitalReadFast(PB_2) == HIGH) {
+    recovery();
+  } 
+  return EXIT_SUCCESS;
 }

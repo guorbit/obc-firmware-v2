@@ -20,7 +20,7 @@ void rtcSetTime(char* isotime){ // Initialise RTC with a specific time and date
     }
 
     int year, month, day, hour, minute, second;
-    sscanf(isotime, "%4d-%2d-%2dT%2d:%2d:%2dZ", &year, &month, &day, &hour, &minute, &second);
+    sscanf(isotime, "%04d%02d%02dT%02d%02d%02dZ", &year, &month, &day, &hour, &minute, &second);
     int yearShort = year - 2000; // RTC year is offset from 2000
 
     sTime.Hours = (u_int8_t)hour;
@@ -40,7 +40,7 @@ void errorHandler()
 }
 
 // ---------------- RTC Initialisation Function ------------------
-extern "C" void rtcInit()
+extern "C" void initRTC()
 {
     // Enable Power Clock and Backup Access
     __HAL_RCC_PWR_CLK_ENABLE();
@@ -96,7 +96,7 @@ extern "C" void rtcInit()
 // -------------------- Get Time --------------------
 const char* rtcGetTime()
 {
-    static char buffer[32];  // Holds formatted time text
+    static char buffer[17];  // Holds formatted time text
 
     RTC_TimeTypeDef sTime;
     RTC_DateTypeDef sDate;
@@ -107,7 +107,7 @@ const char* rtcGetTime()
 
     // Format the values into a readable string: "YYYY-MM-DD HH:MM:SS"
     snprintf(buffer, sizeof(buffer),
-             "%04d-%02d-%02dT%02d:%02d:%02dZ\r\n",
+             "%04d%02d%02dT%02d%02d%02dZ\0",
              sDate.Year + 2000, sDate.Month, sDate.Date,
              sTime.Hours, sTime.Minutes, sTime.Seconds);
 

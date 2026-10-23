@@ -2,14 +2,10 @@
 #define TMP_H
 
 /** 
- * include Arduino.h for int8_t definition,used to avoid wasting RAM 
- * with an oversised integer
- */ 
-
-#include <Arduino.h>
-/** Returns the temperature from the onboard TMP36 sensor 
+ * @brief Reads the temperature from the onboard TMP36 sensor 
+ *
+ * @return int The current temperature in degrees Celsius
  */
-
 int tmp();
 
 #endif

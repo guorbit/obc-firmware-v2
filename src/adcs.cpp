@@ -1,6 +1,7 @@
 #include "adcs.h"
 #include <Wire.h>
 #include <Arduino.h>
+#include <config.h>
 
 TwoWire i2c1(ADCS_I2C_SDA, ADCS_I2C_SCL);
 
@@ -11,7 +12,7 @@ int initADCS() {
     return EXIT_SUCCESS;
 }
 
-int readADCS(char* adcsData) { 
+int adcsRead(char* adcsData) { 
     int bytesRecieved = i2c1.requestFrom(ADCS_I2C_ADDRESS, READOUT_LENGTH_ADCS);
 
     for (int i = 0; i < READOUT_LENGTH_ADCS; i++) {
@@ -19,13 +20,6 @@ int readADCS(char* adcsData) {
             adcsData[i] = i2c1.read();
         } 
     }
-
-    /*
-    while (i2c1.available()) {
-        char c = i2c1.read();
-        Serial.println(c);
-    }
-    */
 
     return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 #include "save.h"
 #include "flash.h"
+#include "config.h"
 #include <Arduino.h>
-#include <string>
 
 // -------------------- Metadata Buffer --------------------
 // Optional: can be read byte-by-byte if RAM is tight
@@ -113,25 +113,14 @@ uint32_t saveState(const char* data, size_t len) {
 
     flashAdvanceNextFreeAddr(addr, len);
 
+    #if OBC_DEBUG
     Serial.print("saveState: wrote ");
     Serial.print(len);
     Serial.print(" bytes at address 0x");
     Serial.println(addr, HEX);
+    #endif
 
     return addr;
-}
-
-uint32_t saveStateString(const std::string& s) {
-    if (s.empty()) {
-        Serial.println("Warning: saveStateString called with empty data");
-        return 0;
-    }
-
-    // Convert std::string → char array
-    const char* cstr = s.c_str();
-
-    // Delegate to saveState()
-    return saveState(cstr, s.size());
 }
 
 
