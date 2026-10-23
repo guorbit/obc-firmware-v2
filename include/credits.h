@@ -3,7 +3,6 @@
 
 // List of contributors
 const char creditsList[] = 
-    "Eric Dawe\r\n"
     "Islay Ross\r\n"
     "Kevin Nnaji\r\n"
     "Milo Godwin\r\n"
