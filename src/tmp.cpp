@@ -18,5 +18,11 @@ int tmp(){
     voltage = (value / ADC_STEPS) * V_REF; // convert to voltage
     temp = (voltage - 0.5f) * 100; // convert to temperature in C
     
+
+    // Never go above or below 99C, with -98 as error value
+    if (temp > 99 || temp < -99) {
+        temp = -98;
+    }
+
     return temp;
 }
