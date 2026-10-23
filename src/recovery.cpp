@@ -39,50 +39,84 @@ void exitMode() {                  // exit recovery mode
   }
 }
 
+void readline(char* buffer, size_t maxlen) {
+  while (Serial.available() == 0) {} // Wait for input
+  size_t len = Serial.readBytesUntil('\n', buffer, maxlen - 1); // Read input until newline, leaving space for null terminator
+  buffer[len] = '\0'; // Null-terminate the string  
+  // Clear leftover carriage return or extra characters
+  char *cr = strchr(buffer, '\r');
+  if (cr) *cr = '\0';
+  while (Serial.available()) Serial.read();
+}
+
+bool validation(const char* input, const char* type) {
+  // --- DATE VALIDATION LOGIC ---
+  if (strcmp(type, "date") == 0) {
+    if (strlen(input) != 10 || input[4] != '-' || input[7] != '-') {
+      Serial.println("Invalid date format. Please use YYYY-MM-DD format.");
+      return false;
+    }
+
+    int month = atoi(&input[5]);
+    int day = atoi(&input[8]);
+
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+      Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
+      return false;
+    }
+    return true;
+  }
+
+  // --- TIME VALIDATION LOGIC ---
+  if (strcmp(type, "time") == 0) {
+    if (strlen(input) != 8 || input[2] != ':' || input[5] != ':') {
+      Serial.println("Invalid time format. Please use HH:MM:SS format.");
+      return false;
+    }
+
+    int hours = atoi(&input[0]);
+    int minutes = atoi(&input[3]);
+    int seconds = atoi(&input[6]);
+
+    if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {
+      Serial.println("Invalid time values. Please ensure hours are 0-23, minutes and seconds are 0-59.");
+      return false;
+    }
+    return true;
+  }
+
+  return false;
+}
+
 void timeHourMinSec() {               
   Serial.println("Please enter the current year, month, and day.");
-  while (Serial.available() == 0) {
-    // wait for input
-  }
-  String dateInput = Serial.readStringUntil('\n');    //read input until enter
-  dateInput.trim();                                  //remove any leading/trailing whitespace
+  char Date_Input[11]; // Buffer to hold the date input (10 chars + null terminator)
+  readline(Date_Input, sizeof(Date_Input)); // Read the date input using the readline function
   
-  // basic format validation
-  if (dateInput.length() != 10 || dateInput.charAt(4) != '-' || dateInput.charAt(7) != '-') { 
-    Serial.println("Invalid date format. Please use YYYY-MM-DD format.");     
+  // basic format and range validation
+  if (!validation(Date_Input, "date")) {
     return;
   }
   
   // extract year, month, and day
-  int year = dateInput.substring(0, 4).toInt();
-  int month = dateInput.substring(5, 7).toInt();
-  int day = dateInput.substring(8, 10).toInt();
-
-  // validate ranges
-  if (month < 1 || month > 12 || day < 1 || day > 31) {   
-    Serial.println("Invalid date values. Please ensure month is 1-12 and day is 1-31.");
-    return;
-  }
+  int year = atoi(&Date_Input[0]);
+  int month = atoi(&Date_Input[5]);
+  int day = atoi(&Date_Input[8]);
 
   // now get time
   Serial.println("Please enter the current time in HH:MM:SS format.");
-  while (Serial.available() == 0) {
-    // wait for input
-  }
+  char Time_Input[11]; // Buffer to hold the time input (8 chars + null terminator)
+  readline(Time_Input, sizeof(Time_Input)); // Read the time input using the readline function
 
-  String timeInput = Serial.readStringUntil('\n');    //read input until enter
-  timeInput.trim();                                   //remove any leading/trailing whitespace
-
-  // basic format validation
-  if (timeInput.length() != 8 || timeInput.charAt(2) != ':' || timeInput.charAt(5) != ':') { 
-    Serial.println("Invalid time format. Please use HH:MM:SS format.");     
+  // basic format and range validation
+  if (!validation(Time_Input, "time")) {
     return;
   }
 
   // extract hours, minutes, and seconds
-  int hours = timeInput.substring(0, 2).toInt(); 
-  int minutes = timeInput.substring(3, 5).toInt();
-  int seconds = timeInput.substring(6, 8).toInt();
+  int hours = atoi(&Time_Input[0]); 
+  int minutes = atoi(&Time_Input[3]);
+  int seconds = atoi(&Time_Input[6]);
 
   // validate ranges
   if (hours < 0 || hours > 23 || minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) {   
