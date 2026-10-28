@@ -56,21 +56,21 @@ int sendComms(const char* message){
     return 0;
   }
 
-  int chunkSize = (remaining > 58) ? 58 : remaining;
-  char chunk[59];
+  int chunkSize = (remaining > COMMS_CHUNK_SIZE) ? COMMS_CHUNK_SIZE : remaining;
+  char chunk[COMMS_CHUNK_SIZE + 1];
   strncpy(chunk, pendingMessage + messageOffset, chunkSize);
   chunk[chunkSize] = '\0';
 
-#if OBC_DEBUG_AS_COMMS
+if constexpr (OBC_DEBUG_AS_COMMS){
   Serial.print(chunk);
-#endif
+}
 
   ResponseStatus status = comms.sendMessage(chunk);
   if (status.code != E32_SUCCESS) {
-#if OBC_DEBUG
+if constexpr (OBC_DEBUG){
     Serial.print(F("Comms send chunk failed: "));
     Serial.println(status.getResponseDescription());
-#endif
+  }
     return -1;
   } 
 

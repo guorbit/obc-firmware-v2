@@ -10,6 +10,7 @@ const char creditsList[] =
     "Saliha Afridi\r\n"
     "Moishe Pang\r\n"
     "Arundati Asha\r\n";
+    "Sara Abuu\r\n";
 
 void credits();  // declaring 'credits' function
 
