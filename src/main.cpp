@@ -27,9 +27,9 @@ void setup() {
   delay(8000); // Delay to allow time for connection.
 
   // Debug mode
-#if OBC_DEBUG
+if constexpr (OBC_DEBUG) {
   Serial.begin(115200); // initialize serial for debug output
-#endif
+}
 
   // Initialise everything
   //initBlink();    // Initialise blinker on status LED
@@ -71,10 +71,10 @@ void loop() {
   // }
 
 // Debug mode
-#if OBC_DEBUG
+if constexpr (OBC_DEBUG){
   // Print the temperature every loop
   //Serial.printf("TMP: %i\n", tmp());
-#endif
+}
 
 
 
@@ -133,9 +133,9 @@ void loop() {
     saveState(obcMessage, strlen(obcMessage));
 
 
-#if OBC_DEBUG
+if constexpr (OBC_DEBUG){
     Serial.println(obcMessage);
-#endif
+  }
 
     // Reset lastPrint
     lastPrint = millis();
