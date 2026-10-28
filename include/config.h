@@ -14,12 +14,13 @@ constexpr uint16_t OBC_MESSAGE_LEN = 512;
 // Comms
 #define GPIO_COMMS_CFG PC_6
 constexpr uint16_t COMMS_CHUNK_INTERVAL_MILLIS = 3000;
+constexpr uint8_t COMMS_CHUNK_SIZE = 58;
 
 
 // ADCS
 constexpr uint8_t ADCS_I2C_ADDRESS = 0x08;
-constexpr uint16_t READOUT_LENGTH_ADCS = 148;
-constexpr uint16_t ADCS_I2C_SPEED = 100000;
+constexpr uint8_t READOUT_LENGTH_ADCS = 148;
+constexpr uint32_t ADCS_I2C_SPEED = 100000;
 #define ADCS_I2C_SDA PB_7
 #define ADCS_I2C_SCL PB_6
 
