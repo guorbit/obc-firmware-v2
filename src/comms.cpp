@@ -56,8 +56,8 @@ int sendComms(const char* message){
     return 0;
   }
 
-  int chunkSize = (remaining > 58) ? 58 : remaining;
-  char chunk[59];
+  int chunkSize = (remaining > COMMS_CHUNK_SIZE) ? COMMS_CHUNK_SIZE : remaining;
+  char chunk[COMMS_CHUNK_SIZE + 1];
   strncpy(chunk, pendingMessage + messageOffset, chunkSize);
   chunk[chunkSize] = '\0';
 
