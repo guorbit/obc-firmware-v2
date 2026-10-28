@@ -8,7 +8,8 @@ const char creditsList[] =
     "Kevin Nnaji\r\n"
     "Milo Godwin\r\n"
     "Saliha Afridi\r\n"
-    "Moishe Pang\r\n";
+    "Moishe Pang\r\n"
+    "Arundati Asha\r\n";
 
 void credits();  // declaring 'credits' function
 
