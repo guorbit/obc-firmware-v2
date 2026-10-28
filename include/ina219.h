@@ -3,27 +3,28 @@
 
 #include <Arduino.h>
 #include <Wire.h>
+#include <cstdint>
 
-#define INA219_DEBUG 0 
+constexpr uint8_t INA219_DEBUG = 0; 
 
 // INA219 memory registers
-#define INA219_REG_CONFIG		0x00	// configuration register
-#define INA219_REG_V_SHUNT		0x01	// differential shunt voltage
-#define INA219_REG_VBUS			0x02	// bus voltage (wrt to system/chip GND)
-#define INA219_REG_POWER		0x03	// system power draw (= V_BUS * I_SHUNT)
-#define INA219_REG_CURRENT		0x04	// shunt current
-#define INA219_REG_CALIB		0x05	// calibration register
+constexpr int8_t INA219_REG_CONFIG = 0x00; // configuration register
+constexpr int8_t INA219_REG_V_SHUNT = 0x01; 	// differential shunt voltage
+constexpr int8_t INA219_REG_VBUS = 0x02; // bus voltage (wrt to system/chip GND)
+constexpr int8_t INA219_REG_POWER = 0x03; 	// system power draw (= V_BUS * I_SHUNT)
+constexpr int8_t INA219_REG_CURRENT = 0x04;	// shunt current
+constexpr int8_t INA219_REG_CALIB = 0x05;	// calibration register
 
 #define INA219_RESET		    0xFFFF	// send to CONFIG_R to reset unit
 
 #define INA219_CONFIG_DEFAULT	0x399F  // default configuration register value
 
 // config. register bit labels
-#define INSA219_BIT_RST	    15      // reset bit
-#define INSA219_BIT_BRNG	13      // bus voltage range       
-#define INSA219_BIT_PG1	    12      // shunt voltage gain bits
-#define INSA219_BIT_PG0	    11
-#define INSA219_BIT_BADC4	10      // bus voltage ADC resolution/averaging
+constexpr int8_t INSA219_BIT_RST = 15;      // reset bit
+constexpr int8_t INSA219_BIT_BRNG = 13;       // bus voltage range       
+constexpr int8_t INSA219_BIT_PG1 = 12;      // shunt voltage gain bits
+constexpr int8_t INSA219_BIT_PG0 = 11;
+constexpr int8_t INSA219_BIT_BADC4 = 10;        // bus voltage ADC resolution/averaging
 #define INSA219_BIT_BADC3	9
 #define INSA219_BIT_BADC2	8
 #define INSA219_BIT_BADC1	7
