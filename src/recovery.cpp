@@ -5,6 +5,7 @@
 #include "recovery.h"
 #include "adcs.h" // for automatic time setting
 #include "user.h"
+#include "credits.h"
 
 char receivedChar;
 bool newData = false; 
@@ -291,6 +292,10 @@ int flashEraseMode() {
   return status;
 }
 
+int creditCalling(){
+  credits();
+}
+
 void handleInput() {
   if (newData) {
     newData = false;
@@ -314,6 +319,11 @@ void handleInput() {
       Serial.println(status);
       break;
 
+    case 'c':
+    case 'C':
+      status=creditCalling();
+      Serial.println(status);
+      break;
 
     default:
       Serial.println("Invalid choice.");
@@ -341,7 +351,7 @@ void recovery() {                 // recovery mode
   newData = false;
 
   while (true) {                // main recovery loop  
-    Serial.println("Press 't' to set the time, 'f' to read the flash, or 'e' to erase the flash.");
+    Serial.println("Press 't' to set the time, 'f' to read the flash,'e' to erase the flash, 'c' to print the credits");
     newData = false;
 
     while(!newData) { 
