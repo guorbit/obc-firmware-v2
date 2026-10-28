@@ -14,6 +14,7 @@
 // Comms
 #define GPIO_COMMS_CFG PC_6
 #define COMMS_CHUNK_INTERVAL_MILLIS 3000
+#define COMMS_CHUNK_SIZE 58 // current transmission board used by Comms team has a max package size of 58 bytes
 
 
 // ADCS
