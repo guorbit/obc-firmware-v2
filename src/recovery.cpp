@@ -292,10 +292,6 @@ int flashEraseMode() {
   return status;
 }
 
-int creditCalling(){
-  credits();
-}
-
 void handleInput() {
   if (newData) {
     newData = false;
@@ -321,8 +317,7 @@ void handleInput() {
 
     case 'c':
     case 'C':
-      status=creditCalling();
-      Serial.println(status);
+      credits();
       break;
 
     default:
