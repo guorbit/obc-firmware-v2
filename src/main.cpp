@@ -44,7 +44,9 @@ if constexpr (OBC_DEBUG) {
   initUser();     // initialise user button
 
   checkRec();     // check if recovery mode should be entered
-
+  if (checkRec()==1){
+    recovery();
+  };
   //getComms();  
   setComms();     // configure minimum power and broadcast addressing
 
