@@ -61,7 +61,7 @@ void INA219::calibrate(float shunt_val, float v_bus_max, float i_max_expected) {
 
   power_lsb = current_lsb * 20.0f; // power LSB is 20 times current LSB
 
-#if (INA219_DEBUG == 1)
+if constexpr (INA219_DEBUG == 1) {
   Serial.print("i_max_expected: ");
   Serial.println(i_max_expected, 8);
   Serial.print("current_lsb:	");
@@ -73,7 +73,7 @@ void INA219::calibrate(float shunt_val, float v_bus_max, float i_max_expected) {
   Serial.println(calibration_value);
   Serial.print("r_shunt:	");
   Serial.println(r_shunt);
-#endif
+}
 
   write16(INA219_REG_CALIB, calibration_value);
   configure(INA219_CONFIG_DEFAULT);
