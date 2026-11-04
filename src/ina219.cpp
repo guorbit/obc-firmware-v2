@@ -148,8 +148,8 @@ int16_t INA219::read16(uint8_t reg) {
 
     // STEP 2: Read 2 bytes from that register
 
-    uint8_t bytesRecieved = _i2c->requestFrom(i2c_address, (uint8_t)2);
-    if (bytesRecieved == 2) {
+    uint8_t bytesReceived = _i2c->requestFrom(i2c_address, (uint8_t)2);
+    if (bytesReceived == 2) {
       uint16_t ret = _i2c->read();
       ret <<= 8;
       ret |= _i2c->read();

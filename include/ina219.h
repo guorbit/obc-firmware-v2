@@ -19,21 +19,21 @@
 #define INA219_CONFIG_DEFAULT	0x399F  // default configuration register value
 
 // config. register bit labels
-#define INSA219_BIT_RST	    15      // reset bit
-#define INSA219_BIT_BRNG	13      // bus voltage range       
-#define INSA219_BIT_PG1	    12      // shunt voltage gain bits
-#define INSA219_BIT_PG0	    11
-#define INSA219_BIT_BADC4	10      // bus voltage ADC resolution/averaging
-#define INSA219_BIT_BADC3	9
-#define INSA219_BIT_BADC2	8
-#define INSA219_BIT_BADC1	7
-#define INSA219_BIT_SADC4	6       // shunt voltage ADC resolution/averaging
-#define INSA219_BIT_SADC3	5
-#define INSA219_BIT_SADC2	4
-#define INSA219_BIT_SADC1	3
-#define INSA219_BIT_MODE3	2       // operating mode bits
-#define INSA219_BIT_MODE2	1
-#define INSA219_BIT_MODE1	0
+#define INA219_BIT_RST	    15      // reset bit
+#define INA219_BIT_BRNG	13      // bus voltage range       
+#define INA219_BIT_PG1	    12      // shunt voltage gain bits
+#define INA219_BIT_PG0	    11
+#define INA219_BIT_BADC4	10      // bus voltage ADC resolution/averaging
+#define INA219_BIT_BADC3	9
+#define INA219_BIT_BADC2	8
+#define INA219_BIT_BADC1	7
+#define INA219_BIT_SADC4	6       // shunt voltage ADC resolution/averaging
+#define INA219_BIT_SADC3	5
+#define INA219_BIT_SADC2	4
+#define INA219_BIT_SADC1	3
+#define INA219_BIT_MODE3	2       // operating mode bits
+#define INA219_BIT_MODE2	1
+#define INA219_BIT_MODE1	0
 
 // default values
 #define INA219_DEFAULT_I2C_ADDRESS  0x40    // (64) Default address with A0/A1 tied low
