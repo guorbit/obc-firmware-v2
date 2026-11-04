@@ -5,6 +5,7 @@
 
 #include <Arduino.h> 
 #include <Wire.h>
+#include <cstdint>
 
 // Registers           
 constexpr uint8_t LTC4162L_EN_LIMIT_ALERTS_REG         = 0x0D;
