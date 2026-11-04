@@ -5,40 +5,40 @@
 #include <Wire.h>
 #include <cstdint>
 
-constexpr uint8_t INA219_DEBUG = 0; 
+constexpr bool INA219_DEBUG = 0; 
 
 // INA219 memory registers
-constexpr int8_t INA219_REG_CONFIG  = 0x00; // configuration register
-constexpr int8_t INA219_REG_V_SHUNT = 0x01; // differential shunt voltage
-constexpr int8_t INA219_REG_VBUS    = 0x02; // bus voltage (wrt to system/chip GND)
-constexpr int8_t INA219_REG_POWER   = 0x03; // system power draw (= V_BUS * I_SHUNT)
-constexpr int8_t INA219_REG_CURRENT = 0x04;	// shunt current
-constexpr int8_t INA219_REG_CALIB   = 0x05;	// calibration register
+constexpr uint8_t INA219_REG_CONFIG  = 0x00; // configuration register
+constexpr uint8_t INA219_REG_V_SHUNT = 0x01; // differential shunt voltage
+constexpr uint8_t INA219_REG_VBUS    = 0x02; // bus voltage (wrt to system/chip GND)
+constexpr uint8_t INA219_REG_POWER   = 0x03; // system power draw (= V_BUS * I_SHUNT)
+constexpr uint8_t INA219_REG_CURRENT = 0x04;	// shunt current
+constexpr uint8_t INA219_REG_CALIB   = 0x05;	// calibration register
 	
-constexpr int16_t INA219_RESET = 0xFFFF; // send to CONFIG_R to reset unit
+constexpr uint16_t INA219_RESET = 0xFFFF; // send to CONFIG_R to reset unit
 
-constexpr int16_t INA219_CONFIG_DEFAULT = 0x399F ;// default configuration register value
+constexpr uint16_t INA219_CONFIG_DEFAULT = 0x399F ;// default configuration register value
 
 // config. register bit labels
-constexpr int8_t INSA219_BIT_RST = 15;      // reset bit
-constexpr int8_t INSA219_BIT_BRNG = 13;     // bus voltage range       
-constexpr int8_t INSA219_BIT_PG1 = 12;      // shunt voltage gain bits
-constexpr int8_t INSA219_BIT_PG0 = 11;
-constexpr int8_t INSA219_BIT_BADC4 = 10;    // bus voltage ADC resolution/averaging
-constexpr int8_t INSA219_BIT_BADC3 = 9;
-constexpr int8_t INSA219_BIT_BADC2 = 8;
-constexpr int8_t INSA219_BIT_BADC1 = 7;
-constexpr int8_t INSA219_BIT_SADC4 = 6;     // shunt voltage ADC resolution/averaging
-constexpr int8_t INSA219_BIT_SADC3 = 5;
-constexpr int8_t INSA219_BIT_SADC2 = 4;
-constexpr int8_t INSA219_BIT_SADC1 = 3;
-constexpr int8_t INSA219_BIT_MODE3 = 2;     // operating mode bits
-constexpr int8_t INSA219_BIT_MODE2 = 1;       
-constexpr int8_t INSA219_BIT_MODE1 = 1; 
+constexpr uint8_t INSA219_BIT_RST = 15;      // reset bit
+constexpr uint8_t INSA219_BIT_BRNG = 13;     // bus voltage range       
+constexpr uint8_t INSA219_BIT_PG1 = 12;      // shunt voltage gain bits
+constexpr uint8_t INSA219_BIT_PG0 = 11;
+constexpr uint8_t INSA219_BIT_BADC4 = 10;    // bus voltage ADC resolution/averaging
+constexpr uint8_t INSA219_BIT_BADC3 = 9;
+constexpr uint8_t INSA219_BIT_BADC2 = 8;
+constexpr uint8_t INSA219_BIT_BADC1 = 7;
+constexpr uint8_t INSA219_BIT_SADC4 = 6;     // shunt voltage ADC resolution/averaging
+constexpr uint8_t INSA219_BIT_SADC3 = 5;
+constexpr uint8_t INSA219_BIT_SADC2 = 4;
+constexpr uint8_t INSA219_BIT_SADC1 = 3;
+constexpr uint8_t INSA219_BIT_MODE3 = 2;     // operating mode bits
+constexpr uint8_t INSA219_BIT_MODE2 = 1;       
+constexpr uint8_t INSA219_BIT_MODE1 = 1; 
 
 
 // default values
-constexpr int8_t INA219_DEFAULT_I2C_ADDRESS = 0x40; // (64) Default address with A0/A1 tied low
+constexpr uint8_t INA219_DEFAULT_I2C_ADDRESS = 0x40; // (64) Default address with A0/A1 tied low
 constexpr float INA219_DEFAULT_SHUNT_OHMS = 0.1f; // Common 0.1 ohm shunt (was 0.25)
 constexpr float INA219_DEFAULT_VBUS_MAX = 26.0f; // 26V Bus max (reflecting 26V limit of INA219)
 constexpr float INA219_DEFAULT_IMAX_EXPECTED = 1.0f; // 1 Amp max expected current
