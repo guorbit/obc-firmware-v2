@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <cstdint>
 // Debug mode
 constexpr bool OBC_DEBUG = false;
@@ -48,3 +51,5 @@ constexpr uint16_t FLASH_BLOCK_SIZE = 512;
 
 // First usable user data address (after metadata region)
 constexpr uint16_t FLASH_USER_START = FLASH_METADATA_SIZE;
+
+#endif 
