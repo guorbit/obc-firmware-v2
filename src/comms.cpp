@@ -1,13 +1,12 @@
 #include "comms.h"
 #include "config.h"
 #include "LoRa_E32.h"
-#include <HardwareSerial.h>
 #include <Arduino.h>
 #include <Wire.h>
 
 
 // Temp comms init
-HardwareSerial uart0(PA_10, PA_9);
+Uart uart0(PA_10, PA_9);
 LoRa_E32 comms(&uart0,
                UART_BPS_RATE_9600); // Config without connect AUX and M0 M1
 
