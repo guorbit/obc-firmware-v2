@@ -3,8 +3,8 @@
 #include "ltc4162.h"
 #include <Wire.h>
 
-INA219 fiveVolt_monitor;   // create INA219 instance for 5V bus monitoring
-INA219 threeVolt3_monitor; // create INA219 instance for 3.3V bus monitoring
+INA219 five_volt_monitor;   // create INA219 instance for 5V bus monitoring
+INA219 three_volt3_monitor; // create INA219 instance for 3.3V bus monitoring
 LTC4162 bat_ltc;           // create LTC4162 instance for battery management
 
 //*********************************************************************//
@@ -18,11 +18,11 @@ void initEPS() {
   i2c3.setSCL(EPS_I2C_SCL_PIN);
   i2c3.begin();
 
-  fiveVolt_monitor.begin(&i2c3, FIVE_VOLT_MONITOR_ADDR);
-  fiveVolt_monitor.calibrate();
+  five_volt_monitor.begin(&i2c3, FIVE_VOLT_MONITOR_ADDR);
+  five_volt_monitor.calibrate();
 
-  threeVolt3_monitor.begin(&i2c3, THREE_VOLT3_MONITOR_ADDR);
-  threeVolt3_monitor.calibrate();
+  three_volt3_monitor.begin(&i2c3, THREE_VOLT3_MONITOR_ADDR);
+  three_volt3_monitor.calibrate();
 
   // Initialize LTC4162
   bat_ltc.begin(&i2c3, BATTERY_LTC_ADDR);
@@ -33,10 +33,10 @@ const char *readEPS() {
 
   // Add PDM data to buffer
   snprintf(buffer, sizeof(buffer), "%+0.2fV%+0.2fW%+0.2fV%+0.2fW",
-           fiveVolt_monitor.busVoltage(),   // 5V bus voltage
-           fiveVolt_monitor.busPower(),     // 5V bus power
-           threeVolt3_monitor.busVoltage(), // 3.3V bus voltage
-           threeVolt3_monitor.busPower());  // 3.3V bus voltage
+           five_volt_monitor.busVoltage(),   // 5V bus voltage
+           five_volt_monitor.busPower(),     // 5V bus power
+           three_volt3_monitor.busVoltage(), // 3.3V bus voltage
+           three_volt3_monitor.busPower());  // 3.3V bus voltage
 
   // Add PCM data to buffer
   snprintf(buffer + strlen(buffer), sizeof(buffer) - strlen(buffer), ";%+0.2fV%+0.6fA%+0.2fV%04X%04X%04X%+0.6fC",
