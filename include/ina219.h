@@ -1,5 +1,5 @@
-#ifndef ina219_h
-#define ina219_h
+#ifndef INA219_H
+#define INA219_H
 
 #include <Arduino.h>
 #include <Wire.h>

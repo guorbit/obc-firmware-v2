@@ -1,7 +1,7 @@
 // LTC4162 EPS functions
 
-#ifndef ltc4162_h 
-#define ltc4162_h 
+#ifndef LTC4162_H
+#define LTC4162_H 
 
 #include <Arduino.h> 
 #include <Wire.h>

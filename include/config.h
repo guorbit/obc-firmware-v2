@@ -1,3 +1,6 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
 #include <cstdint>
 
 // Debug mode
@@ -29,6 +32,7 @@ constexpr uint32_t ADCS_I2C_SPEED = 100000;
 
 // Flash
 #define FLASH_CS_PIN PA4   // Chip Select pin
+constexpr unsigned long FLASH_SPI_CLOCK_HZ = 10000000UL;
 constexpr uint8_t CMD_READ_DATA       = 0x03;
 constexpr uint8_t CMD_PAGE_PROGRAM    = 0x02;
 constexpr uint8_t CMD_WRITE_ENABLE    = 0x06; 
@@ -49,3 +53,5 @@ constexpr uint16_t FLASH_BLOCK_SIZE = 512;
 
 // First usable user data address (after metadata region)
 constexpr uint16_t FLASH_USER_START = FLASH_METADATA_SIZE;
+
+#endif 
