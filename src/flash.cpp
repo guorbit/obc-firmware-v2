@@ -18,11 +18,11 @@ void initFlash() {
     SPI.begin();
     
     
-    // SPI_CLOCK_DIV16: Adjust to ~10 MHz
+    // SPISettings expects the flash SPI clock frequency in Hz.
     // MSBFIRST: Most siginifact bit first
     // SPI_MODE0:  SPI mode 0: CPOL = 0, CPHA = 0
 
-    SPI.beginTransaction(SPISettings(SPI_CLOCK_DIV16,MSBFIRST,SPI_MODE0));
+    SPI.beginTransaction(SPISettings(FLASH_SPI_CLOCK_HZ, MSBFIRST, SPI_MODE0));
 }
 
 // -------------------- Basic Operations --------------------
