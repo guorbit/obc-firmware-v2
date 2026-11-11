@@ -20,10 +20,10 @@ constexpr uint16_t INA219_RESET = 0xFFFF; // send to CONFIG_R to reset unit
 constexpr uint16_t INA219_CONFIG_DEFAULT = 0x399F ;// default configuration register value
 
 // config. register bit labels
-constexpr uint8_t INA219_BIT_RST = 15;      // reset bit
-constexpr uint8_t INA219_BIT_BRNG = 13;     // bus voltage range       
-constexpr uint8_t INA219_BIT_PG1 = 12;      // shunt voltage gain bits
-constexpr uint8_t INA219_BIT_PG0 = 11;
+constexpr uint8_t INA219_BIT_RST   = 15;      // reset bit
+constexpr uint8_t INA219_BIT_BRNG  = 13;     // bus voltage range       
+constexpr uint8_t INA219_BIT_PG1   = 12;      // shunt voltage gain bits
+constexpr uint8_t INA219_BIT_PG0   = 11;
 constexpr uint8_t INA219_BIT_BADC4 = 10;    // bus voltage ADC resolution/averaging
 constexpr uint8_t INA219_BIT_BADC3 = 9;
 constexpr uint8_t INA219_BIT_BADC2 = 8;
