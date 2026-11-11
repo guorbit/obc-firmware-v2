@@ -2,6 +2,7 @@
 #define EPS_H
 
 #include <Arduino.h>
+#include <cstdint>
 #include "ina219.h"
 #include "ltc4162.h"
 
