@@ -5,9 +5,9 @@
 #include "ina219.h"
 #include "ltc4162.h"
 
-#define FIVE_VOLT_MONITOR_ADDR 0x41   // INA219 address with A0/A1 tied low
-#define THREE_VOLT3_MONITOR_ADDR 0x40 // INA219 address with A0 tied high, A1 tied low
-#define BATTERY_LTC_ADDR 0x68         // LTC4162 default I2C address
+constexpr uint8_t FIVE_VOLT_MONITOR_ADDR   = 0x41;   // INA219 address with A0/A1 tied low
+constexpr uint8_t THREE_VOLT3_MONITOR_ADDR = 0x40; // INA219 address with A0 tied high, A1 tied low
+constexpr uint8_t BATTERY_LTC_ADDR         = 0x68;         // LTC4162 default I2C address
 
 #define EPS_I2C_SDA_PIN PC9
 #define EPS_I2C_SCL_PIN PA8
