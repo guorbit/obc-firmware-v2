@@ -41,10 +41,10 @@ if constexpr (OBC_DEBUG) {
   initEPS();      // initialise EPS
   initComms();    // initialise comms
   initRec();      // initialise recovery mode
-  initUser();     // initialise user button
-
-  checkRec();     // check if recovery mode should be entered
-
+  initUser();     // initialise user button     
+  if (checkRec()==1){
+    recovery();// check if recovery mode should be entered
+  };
   //getComms();  
   setComms();     // configure minimum power and broadcast addressing
 

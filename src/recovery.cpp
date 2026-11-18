@@ -365,7 +365,12 @@ int initRec() {              // initialise recovery mode
 
 int checkRec() {             // check if recovery mode should be entered
   if (digitalReadFast(PB_2) == HIGH) {
-    recovery();
+    return 1;
   } 
-  return EXIT_SUCCESS;
+  else if (digitalReadFast(PB_2) == LOW)
+  {return 0;
+  }
+  else{
+    return -1;}
+  
 }
