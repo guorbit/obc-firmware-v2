@@ -76,8 +76,6 @@ if constexpr (OBC_DEBUG){
   //Serial.printf("TMP: %i\n", tmp());
 }
 
-
-
   // Blink the status LED
   //blinkPoll();
 
