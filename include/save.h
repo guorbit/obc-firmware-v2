@@ -20,6 +20,9 @@
  * larger than FLASH_BLOCK_SIZE. 
  * @return The flash address the data was written to.
  * @retval 0 The data was not stored (error).  
+ * 
+ * @todo Change size_t len to uint16_t to reduce memory usage, because memory
+ * is likely to be more valuable than CPU cycles.  
  */
 uint32_t saveState(const char* data, size_t len);
 
